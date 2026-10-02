@@ -1,0 +1,71 @@
+generated: '2026-10-02'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/indexed-vc-openapi.yaml
+format: custom
+envelope:
+  media_type: application/json
+  schema: ApiError
+coverage:
+  operations: 19
+  statuses_declared: 8
+problems:
+- status: 400
+  title: Bad Request
+  description: Invalid request parameters
+  operations: 9
+  media_types:
+  - application/json
+  schema: ApiError
+- status: 401
+  title: Unauthorized
+  description: Missing, invalid, or insufficient API key
+  operations: 10
+  media_types:
+  - application/json
+  schema: ApiError
+- status: 402
+  title: Payment Required
+  description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED).
+    This is a billing state, not a rate limit — '
+  operations: 5
+  media_types:
+  - application/json
+  schema: ApiError
+- status: 403
+  title: Forbidden
+  description: Invalid request parameters
+  operations: 4
+  media_types:
+  - application/json
+  schema: ApiError
+- status: 404
+  title: Not Found
+  description: Not found or not owned by you
+  operations: 8
+  media_types:
+  - application/json
+  schema: ApiError
+- status: 409
+  title: Conflict
+  description: Domain matches multiple companies (AMBIGUOUS_DOMAIN); no charge.
+  operations: 1
+  media_types:
+  - application/json
+  schema: ApiError
+- status: 429
+  title: Too Many Requests
+  description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
+  operations: 5
+  media_types:
+  - application/json
+  schema: ApiError
+- status: 503
+  title: Service Unavailable
+  description: Credit service or prior-charge cache unavailable (SYSTEM_ERROR). Cache-read failures do not charge.
+    A lost deduction response can have an un
+  operations: 4
+  media_types:
+  - application/json
+  schema: ApiError

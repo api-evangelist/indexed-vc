@@ -1,0 +1,84 @@
+generated: '2026-10-02'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/indexed-vc-openapi.yaml
+vocabulary:
+  name: Indexed Domain Vocabulary
+  description: 'Terms declared by Indexed''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-02'
+  terms:
+  - term: CompanyRelationship
+    definition: 'Object declared by the contract with fields: relationship_type, ownership_pct, started_on, company.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/CompanyRelationship
+  - term: CompanyCard
+    definition: 'Object declared by the contract with fields: id, name, slug, logo_url, website, short_description, industries, hq_city, hq_country,
+      employee_count_range, total_funding_raised, operating_status. (2 more)'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/CompanyCard
+  - term: DomainMatch
+    definition: 'Object declared by the contract with fields: queried, canonical_domain, matched_via.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/DomainMatch
+  - term: CompanyDomainLookupSummary
+    definition: 'Object declared by the contract with fields: total_requested, total_hits, total_misses, total_insufficient_credits, total_credits_charged.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/CompanyDomainLookupSummary
+  - term: InvestorCard
+    definition: 'Object declared by the contract with fields: id, name, slug, logo_url, website, investor_type, hq_city, hq_country, total_investments_count,
+      _revealed.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/InvestorCard
+  - term: CompanyProfile
+    definition: Shape varies by depth parameter (slim/standard/full)
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/CompanyProfile
+  - term: InvestorProfile
+    definition: Shape varies by depth parameter (slim/standard/full)
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/InvestorProfile
+  - term: SearchPageMeta
+    definition: 'Object declared by the contract with fields: total, page, limit, hasMore, revealed_count, unrevealed_count, all_revealed, next_cursor,
+      search_quota, depth, alternate_entities, alternate_entities_truncated. (1 more)'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/SearchPageMeta
+  - term: RevealResult
+    definition: 'Object declared by the contract with fields: id, entity_type, status, credits_charged, data.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/RevealResult
+  - term: EnrichSummary
+    definition: 'Object declared by the contract with fields: total_requested, total_matched, total_revealed, total_cached, total_unmatched, total_credits_charged.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/EnrichSummary
+  - term: RevealSummary
+    definition: 'Object declared by the contract with fields: total_requested, total_revealed, total_cached, total_failed, total_credits_charged.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/RevealSummary
+  - term: UsageData
+    definition: 'Object declared by the contract with fields: credits_included, credits_used, credits_remaining, pack_credits_remaining, low_balance_threshold,
+      low_balance_basis, overage_enabled, overage_credits_used, period_start, period_end, tier, limits.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/UsageData
+  - term: IndustryFilter
+    definition: 'Object declared by the contract with fields: label, aliases, db_variants_count.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/IndustryFilter
+  - term: ApiError
+    definition: 'Object declared by the contract with fields: error, code, reason, remaining, top_up_url, top_up_pack, request_id, details.'
+    tags:
+    - Object
+    source: openapi/indexed-vc-openapi.yaml#/components/schemas/ApiError

@@ -1,0 +1,53 @@
+{
+  "provider": "indexed-vc",
+  "sources": [
+    "indexed-vc-openapi.yaml"
+  ],
+  "outputs": [
+    "indexed-vc-companies-api-openapi.yml",
+    "indexed-vc-enrich-api-openapi.yml",
+    "indexed-vc-industries-api-openapi.yml",
+    "indexed-vc-investors-api-openapi.yml",
+    "indexed-vc-reveal-api-openapi.yml",
+    "indexed-vc-scheduled-exports-api-openapi.yml",
+    "indexed-vc-usage-api-openapi.yml",
+    "indexed-vc-webhooks-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/indexed-vc-openapi.yaml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "indexed-vc-openapi.yaml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "indexed-vc-openapi.yaml: tagged paths GET /companies -> Companies",
+    "indexed-vc-openapi.yaml: tagged paths POST /companies/lookup -> Companies",
+    "indexed-vc-openapi.yaml: tagged paths GET /companies/{slug} -> Companies",
+    "indexed-vc-openapi.yaml: tagged paths GET /investors -> Investors",
+    "indexed-vc-openapi.yaml: tagged paths GET /investors/{slug} -> Investors",
+    "indexed-vc-openapi.yaml: tagged paths POST /enrich -> Enrich",
+    "indexed-vc-openapi.yaml: tagged paths GET /webhooks -> Webhooks",
+    "indexed-vc-openapi.yaml: tagged paths POST /webhooks -> Webhooks",
+    "indexed-vc-openapi.yaml: tagged paths GET /webhooks/{id} -> Webhooks",
+    "indexed-vc-openapi.yaml: tagged paths PATCH /webhooks/{id} -> Webhooks",
+    "indexed-vc-openapi.yaml: tagged paths DELETE /webhooks/{id} -> Webhooks",
+    "indexed-vc-openapi.yaml: tagged paths POST /webhooks/{id}/test -> Webhooks",
+    "indexed-vc-openapi.yaml: tagged paths GET /scheduled-exports -> Scheduled Exports",
+    "indexed-vc-openapi.yaml: tagged paths POST /scheduled-exports -> Scheduled Exports",
+    "indexed-vc-openapi.yaml: tagged paths DELETE /scheduled-exports/{id} -> Scheduled Exports",
+    "indexed-vc-openapi.yaml: tagged paths GET /webhooks/{id}/deliveries -> Webhooks",
+    "indexed-vc-openapi.yaml: tagged paths POST /reveal -> Reveal",
+    "indexed-vc-openapi.yaml: tagged paths GET /usage -> Usage",
+    "indexed-vc-openapi.yaml: tagged paths GET /industries -> Industries",
+    "indexed-vc-openapi.yaml: declared missing tag: Companies",
+    "indexed-vc-openapi.yaml: declared missing tag: Enrich",
+    "indexed-vc-openapi.yaml: declared missing tag: Industries",
+    "indexed-vc-openapi.yaml: declared missing tag: Investors",
+    "indexed-vc-openapi.yaml: declared missing tag: Reveal",
+    "indexed-vc-openapi.yaml: declared missing tag: Scheduled Exports",
+    "indexed-vc-openapi.yaml: declared missing tag: Usage",
+    "indexed-vc-openapi.yaml: declared missing tag: Webhooks",
+    "apis.yml register: written (+8 apis, 8 total)"
+  ],
+  "skipped": []
+}

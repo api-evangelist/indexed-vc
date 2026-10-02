@@ -1,29 +1,253 @@
 aid: indexed-vc
 name: Indexed
-description: 'Indexed is a company surfaced via the API Evangelist harvest backlog (source: new-submission)
-  and added to the network as a stub for full-pipeline profiling.'
+image: https://indexed.vc/opengraph-image?2ed8c04617ed383e
+description: Indexed provides a private-company intelligence platform offering searchable data on companies, investors, and funding rounds. Users
+  can look up companies by name or domain, explore detailed funding histories, investor relationships, and export data via a REST API. The service
+  includes tiered pricing with free credits and paid plans for higher usage, API keys for authentication, and features such as bulk enrichment,
+  webhooks, and scheduled exports.
 url: https://raw.githubusercontent.com/api-evangelist/indexed-vc/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:new-submission
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-02 (modular-v1; was harvest)
 specificationVersion: '0.20'
 created: '2026-10-02'
 modified: '2026-10-02'
 tags:
 - Company
-apis: []
+- Data
+- Private-Company
+- Funding
+- API
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/indexed-vc-agentic-access.yml
+- type: Plans
+  url: plans/indexed-vc-plans-pricing.yml
+- type: Spectral
+  url: rules/indexed-vc-rules.yml
+- type: JSONLD
+  url: json-ld/indexed-vc-context.jsonld
+- type: Vocabulary
+  url: vocabulary/indexed-vc-vocabulary.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataModel
+  url: data-model/indexed-vc-data-model.yml
+- type: ErrorCatalog
+  url: errors/indexed-vc-problem-types.yml
+- type: Conformance
+  url: conformance/indexed-vc-conformance.yml
+- type: LLMsTxt
+  url: llms/indexed-vc-llms.txt
+- type: Hosts
+  url: hosts/indexed-vc-hosts.yml
+- type: Vendors
+  url: vendors/indexed-vc-vendors.yml
+- type: Authentication
+  url: authentication/indexed-vc-authentication.yml
+- type: DomainSecurity
+  url: security/indexed-vc-domain-security.yml
 - type: Website
   url: https://indexed.vc
 - type: Documentation
   url: https://indexed.vc/docs/api
+- type: Pricing
+  url: https://indexed.vc/pricing
+- type: TermsOfService
+  url: https://indexed.vc/terms
+- type: PrivacyPolicy
+  url: https://indexed.vc/privacy
+- type: Support
+  url: https://indexed.vc/contact
+apis:
+- aid: indexed-vc:indexed-vc-companies-api
+  name: Indexed Companies API
+  description: The Companies API from Indexed — 3 operation(s) for companies.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Companies
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-companies-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
+- aid: indexed-vc:indexed-vc-enrich-api
+  name: Indexed Enrich API
+  description: The Enrich API from Indexed — 1 operation(s) for enrich.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Enrich
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-enrich-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
+- aid: indexed-vc:indexed-vc-industries-api
+  name: Indexed Industries API
+  description: The Industries API from Indexed — 1 operation(s) for industries.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Industries
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-industries-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
+- aid: indexed-vc:indexed-vc-investors-api
+  name: Indexed Investors API
+  description: The Investors API from Indexed — 2 operation(s) for investors.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Investors
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-investors-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
+- aid: indexed-vc:indexed-vc-reveal-api
+  name: Indexed Reveal API
+  description: The Reveal API from Indexed — 1 operation(s) for reveal.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Reveal
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-reveal-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
+- aid: indexed-vc:indexed-vc-scheduled-exports-api
+  name: Indexed Scheduled Exports API
+  description: The Scheduled Exports API from Indexed — 2 operation(s) for scheduled exports.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Scheduled Exports
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-scheduled-exports-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
+- aid: indexed-vc:indexed-vc-usage-api
+  name: Indexed Usage API
+  description: The Usage API from Indexed — 1 operation(s) for usage.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Usage
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-usage-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
+- aid: indexed-vc:indexed-vc-webhooks-api
+  name: Indexed Webhooks API
+  description: The Webhooks API from Indexed — 4 operation(s) for webhooks.
+  humanURL: https://indexed.vc/docs/api
+  baseURL: https://indexed.vc/api/v1
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/indexed-vc-webhooks-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-search-page-meta-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-investor-profile-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-domain-lookup-item-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-company-card-schema.json
+  - type: JSONSchema
+    url: json-schema/indexed-vc-usage-data-schema.json
 x-submission-notes: 'Private-company data API: lookup by name/domain with funding rounds and investors.'
-x-submission-probe: root 200; docs 200; OpenAPI 3.1.0 15 paths server indexed.vc/api/v1; llms.txt 200;
-  404 probe 429 (Vercel checkpoint)
+x-submission-probe: root 200; docs 200; OpenAPI 3.1.0 15 paths server indexed.vc/api/v1; llms.txt 200; 404 probe 429 (Vercel checkpoint)
 x-submitted-by: hello@indexed.vc (apis.io/add, 2026-09-30)
+x-enrichment:
+  date: '2026-10-02'
+  status: enriched
+  artifacts_added: 19
+  pass: modular-v1
+  engine: identity=local,contract=local,surfaces=local,docs=local,regulatory=local

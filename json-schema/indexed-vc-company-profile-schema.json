@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/indexed-vc/main/json-schema/indexed-vc-company-profile-schema.json",
+  "title": "CompanyProfile",
+  "description": "Shape varies by depth parameter (slim/standard/full)",
+  "x-generated": "2026-10-02",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/indexed-vc-openapi.yaml#/components/schemas/CompanyProfile",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "slug"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "name": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "data_as_of": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Last verified enrichment timestamp; null when unknown."
+    },
+    "logo_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "website": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "short_description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "long_description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "industries": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "hq_city": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hq_state": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hq_country": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "employee_count_range": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "total_funding_raised": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Whole USD. Sum of disclosed itemized funding rounds at confidence 50+: equity rounds, notes, SAFEs, equity crowdfunding and grants. Grants are included; debt, IPOs, acquisitions and secondaries are not. Null when no counted round has a disclosed amount."
+    },
+    "operating_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "founded_year": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "last_valuation": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Null at slim/standard depth or when undisclosed."
+    },
+    "last_valuation_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date",
+      "description": "Null at slim/standard depth or when unknown."
+    },
+    "owners": {
+      "type": "array",
+      "description": "depth=standard and full. Companies that own this one, from reviewed, sourced relationships: its controlling parent (subsidiary, brand or division), or its joint-venture owners. Empty when none is recorded.",
+      "items": {
+        "$ref": "#/$defs/CompanyRelationship"
+      }
+    },
+    "subsidiaries": {
+      "type": "array",
+      "description": "depth=standard and full. Companies this one owns (subsidiaries, brands, divisions, joint ventures), up to 200, by name.",
+      "items": {
+        "$ref": "#/$defs/CompanyRelationship"
+      }
+    },
+    "valuation_events": {
+      "type": "array",
+      "description": "Only present at depth=full",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "event_type": {
+            "type": "string"
+          },
+          "amount_raised_usd": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "announced_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "is_lead": {
+                  "type": "boolean"
+                },
+                "investor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "investor_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "technologies": {
+      "type": "array",
+      "description": "Only present at depth=full",
+      "items": {
+        "type": "object",
+        "properties": {
+          "technology_name": {
+            "type": "string"
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stack_type": {
+            "type": "string",
+            "const": "tech"
+          }
+        }
+      }
+    },
+    "app_stack": {
+      "type": "array",
+      "description": "Only present at depth=full",
+      "items": {
+        "type": "object",
+        "properties": {
+          "technology_name": {
+            "type": "string"
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stack_type": {
+            "type": "string",
+            "const": "app"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "CompanyRelationship": {
+      "type": "object",
+      "properties": {
+        "relationship_type": {
+          "type": "string",
+          "enum": [
+            "subsidiary",
+            "brand",
+            "division",
+            "joint_venture"
+          ]
+        },
+        "ownership_pct": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Stated ownership percentage when a source gives it"
+        },
+        "started_on": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "company": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "slug": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "logo_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

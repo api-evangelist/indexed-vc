@@ -1,0 +1,11 @@
+generated: '2026-10-02'
+method: generated
+generator: extract-docs-artifacts.py skills (local)
+source: openapi/indexed-vc-openapi.yaml
+skills:
+- file: skills/indexed-vc-search-and-retrieve-company.md
+  name: indexed-vc-search-and-retrieve-company
+  api: openapi/indexed-vc-openapi.yaml
+  operations:
+  - searchCompanies
+  - getCompany

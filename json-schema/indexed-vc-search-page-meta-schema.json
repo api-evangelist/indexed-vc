@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/indexed-vc/main/json-schema/indexed-vc-search-page-meta-schema.json",
+  "title": "SearchPageMeta",
+  "x-generated": "2026-10-02",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/indexed-vc-openapi.yaml#/components/schemas/SearchPageMeta",
+  "type": "object",
+  "required": [
+    "total",
+    "page",
+    "limit",
+    "hasMore",
+    "revealed_count",
+    "unrevealed_count",
+    "search_quota"
+  ],
+  "properties": {
+    "total": {
+      "type": "integer",
+      "description": "Total matches (always full count, regardless of reveal_status filter)"
+    },
+    "page": {
+      "type": "integer"
+    },
+    "limit": {
+      "type": "integer"
+    },
+    "hasMore": {
+      "type": "boolean"
+    },
+    "revealed_count": {
+      "type": "integer"
+    },
+    "unrevealed_count": {
+      "type": "integer"
+    },
+    "all_revealed": {
+      "type": "boolean",
+      "description": "Present when reveal_status=unrevealed but all matches are already revealed"
+    },
+    "next_cursor": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Opaque continuation token for a paid key; null means the final page. Pass it as the cursor query parameter."
+    },
+    "search_quota": {
+      "type": "object",
+      "required": [
+        "per_day",
+        "used_today",
+        "remaining_today",
+        "resets_at"
+      ],
+      "properties": {
+        "per_day": {
+          "type": "integer"
+        },
+        "used_today": {
+          "type": "integer"
+        },
+        "remaining_today": {
+          "type": "integer"
+        },
+        "resets_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "note": {
+          "type": "string",
+          "description": "Present when this page used paid credits beyond the daily quota"
+        }
+      }
+    },
+    "depth": {
+      "type": "object",
+      "description": "Only present while this page contains unrevealed results; points to the full-record endpoint",
+      "required": [
+        "endpoint",
+        "cost_credits",
+        "unlocks",
+        "docs"
+      ],
+      "properties": {
+        "endpoint": {
+          "type": "string"
+        },
+        "cost_credits": {
+          "type": "integer"
+        },
+        "unlocks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "docs": {
+          "type": "string",
+          "format": "uri"
+        },
+        "free_plan": {
+          "type": "object",
+          "description": "Present when the key's plan does not have full API access",
+          "required": [
+            "credits_per_month",
+            "full_records_per_month"
+          ],
+          "properties": {
+            "credits_per_month": {
+              "type": "integer"
+            },
+            "full_records_per_month": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "alternate_entities": {
+      "type": "array",
+      "description": "Identity-only investor pointers when an exact company-domain lookup belongs to an investor; no private data",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_type",
+          "id",
+          "name",
+          "slug",
+          "website",
+          "investor_type",
+          "profile_path"
+        ],
+        "properties": {
+          "entity_type": {
+            "type": "string",
+            "const": "investor"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri"
+          },
+          "investor_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "profile_path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "alternate_entities_truncated": {
+      "type": "boolean"
+    },
+    "resolved_filters": {
+      "type": "object",
+      "description": "Echo of resolved filter values (e.g., industries: ai-ml → AI/ML). Only present when filters are applied.",
+      "additionalProperties": true
+    }
+  }
+}

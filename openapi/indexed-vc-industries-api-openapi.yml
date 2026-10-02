@@ -1,0 +1,71 @@
+openapi: 3.2.0
+info:
+  title: Indexed.vc Industries API
+  version: 1.0.0
+  description: 'Company intelligence API providing comprehensive data on private companies,
+
+    funding history, and investor relationships.'
+  contact:
+    name: Indexed.vc Support
+    url: https://indexed.vc
+  license:
+    name: Proprietary
+servers:
+- url: https://indexed.vc/api/v1
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Industries
+paths:
+  /industries:
+    get:
+      operationId: listIndustries
+      summary: List valid industry filters
+      description: 'Returns canonical industry labels and their accepted aliases.
+
+        FREE and publicly accessible — no API key required.
+
+        Response is cached for 24 hours.'
+      security: []
+      responses:
+        '200':
+          description: Industry list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IndustryFilter'
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+      tags:
+      - Industries
+components:
+  schemas:
+    IndustryFilter:
+      type: object
+      properties:
+        label:
+          type: string
+          description: Canonical display label
+        aliases:
+          type: array
+          items:
+            type: string
+          description: Accepted alternative values (lowercase, slugs)
+        db_variants_count:
+          type: integer
+          description: Number of DB industry values this label matches
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key in format `idx_<32chars>`. Available on every plan; entity detail and reveal spend credits on every plan, while bulk enrichment, webhooks, scheduled exports and listing/sorting require a paid plan (Silver+).

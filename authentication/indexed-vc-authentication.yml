@@ -1,0 +1,18 @@
+generated: '2026-10-02'
+method: derived
+source: openapi/indexed-vc-openapi.yaml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: API key in format `idx_<32chars>`. Available on every plan; entity detail and
+    reveal spend credits on every plan, while bulk enrichment, webhooks, scheduled exports and
+    listing/sorting require a paid plan (Silver+).
+  sources:
+  - openapi/indexed-vc-openapi.yaml

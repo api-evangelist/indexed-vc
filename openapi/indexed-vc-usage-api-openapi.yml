@@ -1,0 +1,164 @@
+openapi: 3.2.0
+info:
+  title: Indexed.vc Usage API
+  version: 1.0.0
+  description: 'Company intelligence API providing comprehensive data on private companies,
+
+    funding history, and investor relationships.'
+  contact:
+    name: Indexed.vc Support
+    url: https://indexed.vc
+  license:
+    name: Proprietary
+servers:
+- url: https://indexed.vc/api/v1
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Usage
+paths:
+  /usage:
+    get:
+      operationId: getUsage
+      summary: Check credit balance and limits
+      description: FREE — does not consume credits. Returns tier, credit balance, and rate limits.
+      responses:
+        '200':
+          description: Usage data
+          headers:
+            X-Request-Id:
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UsageData'
+        '401':
+          $ref: '#/components/responses/AuthError'
+      tags:
+      - Usage
+components:
+  schemas:
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+    UsageData:
+      type: object
+      properties:
+        credits_included:
+          type: integer
+        credits_used:
+          type: integer
+        credits_remaining:
+          type: integer
+        pack_credits_remaining:
+          type: integer
+        low_balance_threshold:
+          type: number
+          description: Alert threshold for the active subscription or latest-pack bucket
+        low_balance_basis:
+          type: integer
+          description: Current bucket size used to derive the 10% threshold
+        overage_enabled:
+          type: boolean
+        overage_credits_used:
+          type: integer
+        period_start:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        period_end:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        tier:
+          type: string
+          enum:
+          - free
+          - silver
+          - gold
+          - platinum
+          - enterprise
+        limits:
+          type: object
+          properties:
+            rate_limit_per_minute:
+              type: integer
+            api_keys_max:
+              type: integer
+            reveal_batch_size_max:
+              type: integer
+            reveal_hourly_max:
+              type: integer
+  responses:
+    AuthError:
+      description: Missing, invalid, or insufficient API key
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key in format `idx_<32chars>`. Available on every plan; entity detail and reveal spend credits on every plan, while bulk enrichment, webhooks, scheduled exports and listing/sorting require a paid plan (Silver+).

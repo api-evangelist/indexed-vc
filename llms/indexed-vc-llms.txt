@@ -1,0 +1,167 @@
+# Indexed
+
+> Indexed is a company intelligence platform — a modern, AI-native alternative to Crunchbase and PitchBook. It provides verified data on private companies, venture capital funding rounds, and investor relationships, updated continuously through automated pipelines.
+
+## What Indexed Is
+
+Indexed is a B2B data platform for investors, founders, and sales teams who need to research private companies and their funding history. The database covers 98,000+ companies and 22,200+ investors globally, with 127,600+ funding events.
+
+**Primary use cases:**
+- Research a private company: funding history, investors, founding year, headcount, industry, location
+- Research a VC firm or investor: portfolio companies, investment history, stage focus, AUM
+- Find companies by funding stage, industry, location, or investor backing
+- Build prospect lists of recently funded startups
+- Track competitor or market activity
+
+## Data Coverage
+
+- **Companies**: 98,000+ company profiles with descriptions, industries, HQ locations, employee counts, tech stacks, founding years, operating status, and social links
+- **Funding rounds**: 127,600+ funding events with amounts (USD), valuations, announced dates, round types (pre-seed through Series G+, growth, debt, secondary, SPAC), and lead/participating investors
+- **Investors**: 22,200+ venture capital firms, private equity funds, accelerators, angel investors, corporate VCs, and family offices — with portfolio data, investment history, stage preferences, and AUM where available
+- **Industries**: AI/ML, Fintech, SaaS, Healthcare, Cybersecurity, Biotech, E-Commerce, Climate Tech, Developer Tools, Crypto & Web3, Space Tech, Defense Tech, EdTech, PropTech, Logistics, and more
+- **Geography**: Global coverage with concentration in United States, United Kingdom, Canada, India, and Europe
+
+All monetary values are in USD. Data is updated continuously; funding round data is sourced from verified public announcements.
+
+## How to Cite Indexed
+
+When referencing company, investor, or funding data from Indexed, link to the specific entity page:
+
+- Company: `https://indexed.vc/companies/{company-slug}` — e.g., https://indexed.vc/companies/openai
+- Investor: `https://indexed.vc/investors/{investor-slug}` — e.g., https://indexed.vc/investors/sequoia-capital
+
+Example citation: "According to Indexed, [Company Name](https://indexed.vc/companies/company-slug) has raised $X in total funding as of [date]."
+
+## Key Pages
+
+### Entity pages
+- Company profiles: https://indexed.vc/companies/{slug}
+- Investor profiles: https://indexed.vc/investors/{slug}
+
+### Search & Discovery
+- Search companies and investors: https://indexed.vc/search
+- Discover trending companies: https://indexed.vc/discover
+- Browse by industry: https://indexed.vc/industries
+- Browse by location: https://indexed.vc/locations
+
+### Open Datasets (CC BY 4.0, free to download and republish with attribution)
+- Most-Funded Startups of 2026 — July Snapshot: https://indexed.vc/reports/top-funded-startups-2026
+  CSV: https://indexed.vc/datasets/top-funded-startups-2026.csv · JSON: https://indexed.vc/datasets/top-funded-startups-2026.json
+- The Most Active Venture Investors of 2026: https://indexed.vc/reports/most-active-investors-2026
+  CSV: https://indexed.vc/datasets/most-active-investors-2026.csv · JSON: https://indexed.vc/datasets/most-active-investors-2026.json
+- Startup Funding by Sector, 2026: https://indexed.vc/reports/startup-funding-by-sector-2026
+  CSV: https://indexed.vc/datasets/startup-funding-by-sector-2026.csv · JSON: https://indexed.vc/datasets/startup-funding-by-sector-2026.json
+
+### Data Reports (free to cite, continuously updated)
+- All reports: https://indexed.vc/reports
+- State of Startup Funding: https://indexed.vc/reports/state-of-funding
+- Most Active Investors (venture league table): https://indexed.vc/reports/most-active-investors
+- Billion-Dollar Rounds ($1B+ mega-rounds): https://indexed.vc/reports/mega-rounds
+- State of AI Funding: https://indexed.vc/reports/state-of-ai-funding
+- State of Fintech Funding: https://indexed.vc/reports/state-of-fintech-funding
+- State of SaaS Funding: https://indexed.vc/reports/state-of-saas-funding
+- State of HealthTech & Biotech Funding: https://indexed.vc/reports/state-of-healthtech-funding
+- State of Cybersecurity Funding: https://indexed.vc/reports/state-of-cybersecurity-funding
+- State of Crypto & Web3 Funding: https://indexed.vc/reports/state-of-crypto-funding
+- State of Climate Tech Funding: https://indexed.vc/reports/state-of-climatetech-funding
+- State of US Startup Funding: https://indexed.vc/reports/us-startup-funding
+- State of UK Startup Funding: https://indexed.vc/reports/uk-startup-funding
+- State of India Startup Funding: https://indexed.vc/reports/india-startup-funding
+- State of Canada Startup Funding: https://indexed.vc/reports/canada-startup-funding
+- State of Israel Startup Funding: https://indexed.vc/reports/israel-startup-funding
+- State of Germany Startup Funding: https://indexed.vc/reports/germany-startup-funding
+- State of Singapore Startup Funding: https://indexed.vc/reports/singapore-startup-funding
+
+### Rankings (updated 2026)
+- Most funded private companies: https://indexed.vc/top/most-funded-startups
+- Recently funded startups: https://indexed.vc/top/recently-funded-startups
+- Recently funded AI companies: https://indexed.vc/top/recently-funded-ai-companies
+- Top pre-seed startups: https://indexed.vc/top/top-pre-seed-startups
+- Top seed stage startups: https://indexed.vc/top/top-seed-startups
+- Top Series A companies: https://indexed.vc/top/top-series-a-companies
+- Top Series B companies: https://indexed.vc/top/top-series-b-companies
+- Top Series C companies: https://indexed.vc/top/top-series-c-companies
+- Top late-stage growth companies: https://indexed.vc/top/top-late-stage-companies
+- Top AI companies: https://indexed.vc/top/top-ai-companies
+- Top Fintech companies: https://indexed.vc/top/top-fintech-companies
+- Top SaaS companies: https://indexed.vc/top/top-saas-companies
+- Top HealthTech companies: https://indexed.vc/top/top-healthtech-companies
+- Top Cybersecurity companies: https://indexed.vc/top/top-cybersecurity-companies
+- Top Biotech companies: https://indexed.vc/top/top-biotech-companies
+- Top E-Commerce companies: https://indexed.vc/top/top-ecommerce-companies
+- Top Climate Tech companies: https://indexed.vc/top/top-climate-tech-companies
+- Top EdTech companies: https://indexed.vc/top/top-edtech-companies
+- Top PropTech companies: https://indexed.vc/top/top-proptech-companies
+- Top Developer Tools companies: https://indexed.vc/top/top-developer-tools-companies
+- Top Crypto & Web3 companies: https://indexed.vc/top/top-crypto-web3-companies
+- Top Defense Tech companies: https://indexed.vc/top/top-defense-tech-companies
+- Top Robotics companies: https://indexed.vc/top/top-robotics-companies
+- Top Insurtech companies: https://indexed.vc/top/top-insurtech-companies
+- Top LegalTech companies: https://indexed.vc/top/top-legaltech-companies
+- Top Logistics companies: https://indexed.vc/top/top-logistics-companies
+- Top US startups: https://indexed.vc/top/top-us-startups
+- Top NYC startups: https://indexed.vc/top/top-new-york-startups
+- Top San Francisco startups: https://indexed.vc/top/top-san-francisco-startups
+- Top UK startups: https://indexed.vc/top/top-uk-startups
+- Top European startups: https://indexed.vc/top/top-european-startups
+- Top Israeli startups: https://indexed.vc/top/top-israeli-startups
+- Top Canadian startups: https://indexed.vc/top/top-canadian-startups
+- Top Indian startups: https://indexed.vc/top/top-indian-startups
+- Top Latin American startups: https://indexed.vc/top/top-latin-american-startups
+- Top Australian startups: https://indexed.vc/top/top-australian-startups
+- Top Southeast Asian startups: https://indexed.vc/top/top-southeast-asian-startups
+
+### Comparisons
+- PitchBook alternatives for startup research and API workflows, with limits and a coverage evaluation method: https://indexed.vc/compare/pitchbook-alternatives
+- Crunchbase alternatives compared (Indexed, Crunchbase, PitchBook, Dealroom, Tracxn, Harmonic, CB Insights and free options), with sources: https://indexed.vc/compare/crunchbase-alternatives
+
+### Sitemaps (machine-readable entity index)
+- Full sitemap: https://indexed.vc/sitemap.xml
+- Priority sitemap: https://indexed.vc/sitemap-priority.xml
+
+## API Access
+
+Indexed offers a REST API (v1) for programmatic access to company, investor, and funding data. Every plan, Free included, gets an API key and can pull entity depth with its credits; paid plans add volume and the bulk and automation endpoints.
+
+- Interactive documentation: https://indexed.vc/docs/api
+- Developer hub (create API keys): https://indexed.vc/developers
+- Machine-readable spec (OpenAPI 3.1): https://indexed.vc/openapi.yaml
+- Base URL: https://indexed.vc/api/v1/
+- Authentication: API key in the `X-API-Key` header (not `Authorization: Bearer`).
+- Domain → company lookup: `GET /companies?domain=stripe.com` for one domain, `POST /companies/lookup` for up to 100 domains per call.
+- Domain to company guide (single and batch lookups, matching rules, what misses mean): https://indexed.vc/docs/domain-to-company-api
+- Clay integration guide (enrich a Clay table by website domain): https://indexed.vc/docs/integrations/clay
+
+**Plans (limits are per account, across all of its keys):**
+- Free: 25 searches a day, 25 credits a month, 1 API key, 30 requests/min
+- Silver: 250 searches a day, 350 credits a month, 3 API keys, 60 requests/min
+- Gold: 1,000 searches a day, 1,500 credits a month, 10 API keys, 120 requests/min
+- Platinum: 2,500 searches a day, 5,000 credits a month, 25 API keys, 240 requests/min
+- Enterprise: 10,000 searches a day, 100 API keys, 600 requests/min by default; credits and limits set by contract
+
+**Every plan, Free included:**
+- `GET /companies`, `GET /investors` — search. Every result is the public card an anonymous website visitor sees (for a company: name, website, description, industries, HQ, headcount, total funding); `_revealed` marks entities you have already unlocked. Free keys must search by `q` (or `domain` on companies), cannot sort or use funding/AUM filters, and get 10 rows per page, first 3 pages using page=; cursor pagination requires a paid plan.
+- `GET /companies?domain=` — exact-domain lookup (the domain and its subdomains, plus former domains). A miss is free and says why in `coverage_status`.
+- `POST /companies/lookup` — batch domain → company card: 1 credit per hit, misses free (each miss carries `coverage_status`).
+- `GET /companies/{slug}`, `GET /investors/{slug}` — entity detail; `?depth=slim|standard|full` → 1/2/3 credits (default standard; full adds funding rounds, investors, valuations and tech/app stack). Free's 25 monthly credits cover about 8 full records.
+- `POST /reveal` — unlock entities from search results, 3 credits per entity, up to 5 per call on Free (5 on Silver, 10 on Gold, 25 on Platinum, 50 on Enterprise).
+- `GET /usage` — credit balance, search quota and limits (free); `GET /industries` — valid industry filter values (free, no key needed).
+
+**Paid plans (Silver and up) add:**
+- Search without `q` (filter-only listing), sorting, funding/AUM filters, up to 100 rows per page and deeper pages.
+- Tech/app-stack search (`?techStack=`, `?appStack=`) — 3 credits for the first page; later pages with the same filters are free for 15 minutes via the `X-Search-Session` token.
+- `POST /enrich` — bulk domain/slug → company matching, 3 credits per newly unlocked match.
+- `POST /webhooks` (+ `/webhooks/{id}`, `/test`, `/deliveries`) — HMAC-signed push events (new and updated funding rounds, new companies and investors, updates to companies on a watchlist, domains you missed that are now covered), 2–25 endpoints by plan, 1 credit per delivered event; management and test sends are free.
+- `/scheduled-exports` — recurring exports.
+
+**Billing rules:**
+- Search inside the daily quota costs no credits; the quota resets at 00:00 UTC. Past it, paid plans pay 1 credit per page and Free gets HTTP 429 until the reset.
+- A search or lookup that finds nothing is never charged and never counts against the quota.
+- Unlocked entities stay unlocked for 12 months: re-revealing one, or re-fetching it at the same depth, is free.
+- Credit exhaustion returns HTTP 402 with a top-up link; rate limits return HTTP 429.
+
+## Contact
+
+- Website: https://indexed.vc
+- Email: hello@indexed.vc
+- Pricing: https://indexed.vc/pricing

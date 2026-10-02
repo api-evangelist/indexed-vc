@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/indexed-vc/main/json-schema/indexed-vc-investor-profile-schema.json",
+  "title": "InvestorProfile",
+  "description": "Shape varies by depth parameter (slim/standard/full)",
+  "x-generated": "2026-10-02",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/indexed-vc-openapi.yaml#/components/schemas/InvestorProfile",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "slug"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "name": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "data_as_of": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Last verified enrichment timestamp; null when unknown."
+    },
+    "logo_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "website": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "investor_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hq_city": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hq_country": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "total_investments_count": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "portfolio_company_count": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "total_capital_deployed": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Null at slim/standard depth or when undisclosed."
+    },
+    "avg_check_size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Null at slim/standard depth or when undisclosed."
+    },
+    "typical_check_size_min": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Null at slim/standard depth or when undisclosed."
+    },
+    "typical_check_size_max": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Null at slim/standard depth or when undisclosed."
+    },
+    "portfolio_companies": {
+      "type": "array",
+      "description": "Only present at depth=full",
+      "items": {
+        "type": "object",
+        "properties": {
+          "company_name": {
+            "type": "string"
+          },
+          "company_slug": {
+            "type": "string"
+          },
+          "company_logo_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "industries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hq_country": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "investments": {
+      "type": "array",
+      "description": "Only present at depth=full",
+      "items": {
+        "type": "object",
+        "properties": {
+          "company_name": {
+            "type": "string"
+          },
+          "company_slug": {
+            "type": "string"
+          },
+          "event_type": {
+            "type": "string"
+          },
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "amount": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "is_lead": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "sub_funds": {
+      "type": "array",
+      "description": "Only present at depth=full",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

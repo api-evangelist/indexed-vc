@@ -1,0 +1,29 @@
+generated: '2026-10-02'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://indexed.vc/pricing
+sources:
+- https://indexed.vc/pricing
+name: Indexed pricing
+audience: business-product
+pricing_basis: per-seat
+plans:
+- name: Free
+  price_text: Free
+  description: Start free with 25 credits a month
+- name: Silver
+  price_text: $ 49 /mo
+  price: 49
+  description: For active investors and founders
+- name: Gold
+  price_text: $ 149 /mo
+  price: 149
+  description: For teams and API users
+- name: Platinum
+  price_text: $ 499 /mo
+  price: 499
+  description: For data‑intensive workflows
+- name: Enterprise
+  price_text: Contact sales
+  description: Custom volume pricing and add‑on packs
+docs: https://indexed.vc/pricing

@@ -1,0 +1,648 @@
+openapi: 3.2.0
+info:
+  title: Indexed.vc Investors API
+  version: 1.0.0
+  description: 'Company intelligence API providing comprehensive data on private companies,
+
+    funding history, and investor relationships.'
+  contact:
+    name: Indexed.vc Support
+    url: https://indexed.vc
+  license:
+    name: Proprietary
+servers:
+- url: https://indexed.vc/api/v1
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Investors
+paths:
+  /investors:
+    get:
+      operationId: searchInvestors
+      summary: Search investors
+      description: Search and filter investors. Free within the daily quota; paid plans spend 1 credit per nonempty page afterward. Free stops at its daily quota.
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+      - name: types
+        in: query
+        schema:
+          type: string
+        description: 'Comma-separated: vc, pe, angel, cvc, accelerator, family_office, etc.'
+      - name: stages
+        in: query
+        schema:
+          type: string
+        description: 'Comma-separated: seed, series_a, series_b, etc.'
+      - name: industries
+        in: query
+        schema:
+          type: string
+        description: Comma-separated industry preferences
+      - name: countries
+        in: query
+        schema:
+          type: string
+      - name: minAum
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+      - name: maxAum
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+      - name: minCompleteness
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 64
+        description: Minimum data_completeness_score — skip thin records
+      - name: updated_since
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: 'Incremental sync: only records modified at/after this ISO date or timestamp (updated_at watermark). Combine with cursor pagination for drift-free delta pulls.'
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum:
+          - name
+          - aum
+          - portfolio_count
+          - total_investments
+          - last_investment_date
+          - data_completeness_score
+      - name: order
+        in: query
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+      - name: cursor
+        in: query
+        schema:
+          type: string
+        description: Paid plans only. Keyset cursor for sequential bulk pulls. Free keys use page=1 through page=3. Pass meta.next_cursor from the prior page; ignores page/sort.
+      - name: reveal_status
+        in: query
+        schema:
+          type: string
+          enum:
+          - all
+          - revealed
+          - unrevealed
+          default: all
+      responses:
+        '200':
+          description: Search results (full public cards with reveal flags)
+          headers:
+            X-Request-Id:
+              schema:
+                type: string
+                format: uuid
+            X-Credits-Cost:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - meta
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InvestorCard'
+                  meta:
+                    $ref: '#/components/schemas/SearchPageMeta'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+      tags:
+      - Investors
+  /investors/{slug}:
+    get:
+      operationId: getInvestor
+      summary: Get investor by slug
+      description: 'Fetch a single investor profile. Same depth pricing as companies:
+
+        slim (1), standard (2), full (3 credits).
+
+        Full includes portfolio_companies, investments, and sub_funds.'
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-z0-9][a-z0-9-]*[a-z0-9]$
+      - name: depth
+        in: query
+        schema:
+          type: string
+          enum:
+          - slim
+          - standard
+          - full
+          default: standard
+      responses:
+        '200':
+          description: Investor profile
+          headers:
+            X-Request-Id:
+              schema:
+                type: string
+                format: uuid
+            X-Credits-Cost:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/InvestorProfile'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '503':
+          description: Credit service or prior-charge cache unavailable (SYSTEM_ERROR). Cache-read failures do not charge. A lost deduction response can have an unknown billing outcome; check credit usage before retrying.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      tags:
+      - Investors
+components:
+  schemas:
+    InvestorCard:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      - _revealed
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        logo_url:
+          type:
+          - string
+          - 'null'
+        website:
+          type:
+          - string
+          - 'null'
+        investor_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - vc
+          - pe
+          - growth_equity
+          - hedge_fund
+          - cvc
+          - family_office
+          - sovereign_wealth
+          - accelerator
+          - incubator
+          - angel_group
+          - angel
+          - individual
+          - bank
+          - other
+          - null
+        hq_city:
+          type:
+          - string
+          - 'null'
+        hq_country:
+          type:
+          - string
+          - 'null'
+        total_investments_count:
+          type:
+          - integer
+          - 'null'
+        _revealed:
+          type: boolean
+          description: true when this account has unlocked the entity's depth within 12 months
+    InvestorProfile:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      description: Shape varies by depth parameter (slim/standard/full)
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        data_as_of:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last verified enrichment timestamp; null when unknown.
+        logo_url:
+          type:
+          - string
+          - 'null'
+        website:
+          type:
+          - string
+          - 'null'
+        investor_type:
+          type:
+          - string
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        hq_city:
+          type:
+          - string
+          - 'null'
+        hq_country:
+          type:
+          - string
+          - 'null'
+        total_investments_count:
+          type:
+          - integer
+          - 'null'
+        portfolio_company_count:
+          type:
+          - integer
+          - 'null'
+        total_capital_deployed:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        avg_check_size:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        typical_check_size_min:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        typical_check_size_max:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        portfolio_companies:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              company_name:
+                type: string
+              company_slug:
+                type: string
+              company_logo_url:
+                type:
+                - string
+                - 'null'
+              industries:
+                type: array
+                items:
+                  type: string
+              hq_country:
+                type:
+                - string
+                - 'null'
+        investments:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              company_name:
+                type: string
+              company_slug:
+                type: string
+              event_type:
+                type: string
+              date:
+                type:
+                - string
+                - 'null'
+                format: date
+              amount:
+                type:
+                - integer
+                - 'null'
+              is_lead:
+                type: boolean
+        sub_funds:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+    SearchPageMeta:
+      type: object
+      required:
+      - total
+      - page
+      - limit
+      - hasMore
+      - revealed_count
+      - unrevealed_count
+      - search_quota
+      properties:
+        total:
+          type: integer
+          description: Total matches (always full count, regardless of reveal_status filter)
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+        revealed_count:
+          type: integer
+        unrevealed_count:
+          type: integer
+        all_revealed:
+          type: boolean
+          description: Present when reveal_status=unrevealed but all matches are already revealed
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          description: Opaque continuation token for a paid key; null means the final page. Pass it as the cursor query parameter.
+        search_quota:
+          type: object
+          required:
+          - per_day
+          - used_today
+          - remaining_today
+          - resets_at
+          properties:
+            per_day:
+              type: integer
+            used_today:
+              type: integer
+            remaining_today:
+              type: integer
+            resets_at:
+              type: string
+              format: date-time
+            note:
+              type: string
+              description: Present when this page used paid credits beyond the daily quota
+        depth:
+          type: object
+          description: Only present while this page contains unrevealed results; points to the full-record endpoint
+          required:
+          - endpoint
+          - cost_credits
+          - unlocks
+          - docs
+          properties:
+            endpoint:
+              type: string
+            cost_credits:
+              type: integer
+            unlocks:
+              type: array
+              items:
+                type: string
+            docs:
+              type: string
+              format: uri
+            free_plan:
+              type: object
+              description: Present when the key's plan does not have full API access
+              required:
+              - credits_per_month
+              - full_records_per_month
+              properties:
+                credits_per_month:
+                  type: integer
+                full_records_per_month:
+                  type: integer
+        alternate_entities:
+          type: array
+          description: Identity-only investor pointers when an exact company-domain lookup belongs to an investor; no private data
+          items:
+            type: object
+            required:
+            - entity_type
+            - id
+            - name
+            - slug
+            - website
+            - investor_type
+            - profile_path
+            properties:
+              entity_type:
+                type: string
+                const: investor
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+              website:
+                type: string
+                format: uri
+              investor_type:
+                type:
+                - string
+                - 'null'
+              profile_path:
+                type: string
+        alternate_entities_truncated:
+          type: boolean
+        resolved_filters:
+          type: object
+          description: 'Echo of resolved filter values (e.g., industries: ai-ml → AI/ML). Only present when filters are applied.'
+          additionalProperties: true
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+  responses:
+    ValidationError:
+      description: Invalid request parameters
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    PaymentRequired:
+      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
+
+        '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFoundError:
+      description: Entity not found
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RateLimited:
+      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key in format `idx_<32chars>`. Available on every plan; entity detail and reveal spend credits on every plan, while bulk enrichment, webhooks, scheduled exports and listing/sorting require a paid plan (Silver+).

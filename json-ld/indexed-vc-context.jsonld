@@ -1,0 +1,395 @@
+{
+  "@context": {
+    "@vocab": "https://indexed.vc/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "indexed": "https://indexed.vc/schema#",
+    "CompanyRelationship": "indexed:CompanyRelationship",
+    "relationship_type": {
+      "@id": "indexed:relationship_type",
+      "@type": "xsd:string"
+    },
+    "ownership_pct": {
+      "@id": "indexed:ownership_pct",
+      "@type": "xsd:decimal"
+    },
+    "started_on": {
+      "@id": "indexed:started_on",
+      "@type": "xsd:date"
+    },
+    "company": {
+      "@id": "indexed:company"
+    },
+    "CompanyCard": "indexed:CompanyCard",
+    "id": {
+      "@id": "indexed:id",
+      "@type": "xsd:string"
+    },
+    "name": {
+      "@id": "indexed:name",
+      "@type": "xsd:string"
+    },
+    "slug": {
+      "@id": "indexed:slug",
+      "@type": "xsd:string"
+    },
+    "logo_url": {
+      "@id": "indexed:logo_url",
+      "@type": "xsd:string"
+    },
+    "website": {
+      "@id": "indexed:website",
+      "@type": "xsd:string"
+    },
+    "short_description": {
+      "@id": "indexed:short_description",
+      "@type": "xsd:string"
+    },
+    "industries": {
+      "@id": "indexed:industries",
+      "@container": "@list"
+    },
+    "hq_city": {
+      "@id": "indexed:hq_city",
+      "@type": "xsd:string"
+    },
+    "hq_country": {
+      "@id": "indexed:hq_country",
+      "@type": "xsd:string"
+    },
+    "employee_count_range": {
+      "@id": "indexed:employee_count_range",
+      "@type": "xsd:string"
+    },
+    "total_funding_raised": {
+      "@id": "indexed:total_funding_raised",
+      "@type": "xsd:integer"
+    },
+    "operating_status": {
+      "@id": "indexed:operating_status",
+      "@type": "xsd:string"
+    },
+    "_revealed": {
+      "@id": "indexed:_revealed",
+      "@type": "xsd:boolean"
+    },
+    "domain_match": {
+      "@id": "indexed:domain_match",
+      "@type": "@id"
+    },
+    "DomainMatch": "indexed:DomainMatch",
+    "queried": {
+      "@id": "indexed:queried",
+      "@type": "xsd:string"
+    },
+    "canonical_domain": {
+      "@id": "indexed:canonical_domain",
+      "@type": "xsd:string"
+    },
+    "matched_via": {
+      "@id": "indexed:matched_via",
+      "@type": "xsd:string"
+    },
+    "CompanyDomainLookupSummary": "indexed:CompanyDomainLookupSummary",
+    "total_requested": {
+      "@id": "indexed:total_requested",
+      "@type": "xsd:integer"
+    },
+    "total_hits": {
+      "@id": "indexed:total_hits",
+      "@type": "xsd:integer"
+    },
+    "total_misses": {
+      "@id": "indexed:total_misses",
+      "@type": "xsd:integer"
+    },
+    "total_insufficient_credits": {
+      "@id": "indexed:total_insufficient_credits",
+      "@type": "xsd:integer"
+    },
+    "total_credits_charged": {
+      "@id": "indexed:total_credits_charged",
+      "@type": "xsd:integer"
+    },
+    "InvestorCard": "indexed:InvestorCard",
+    "investor_type": {
+      "@id": "indexed:investor_type",
+      "@type": "xsd:string"
+    },
+    "total_investments_count": {
+      "@id": "indexed:total_investments_count",
+      "@type": "xsd:integer"
+    },
+    "CompanyProfile": "indexed:CompanyProfile",
+    "data_as_of": {
+      "@id": "indexed:data_as_of",
+      "@type": "xsd:dateTime"
+    },
+    "long_description": {
+      "@id": "indexed:long_description",
+      "@type": "xsd:string"
+    },
+    "hq_state": {
+      "@id": "indexed:hq_state",
+      "@type": "xsd:string"
+    },
+    "founded_year": {
+      "@id": "indexed:founded_year",
+      "@type": "xsd:integer"
+    },
+    "last_valuation": {
+      "@id": "indexed:last_valuation",
+      "@type": "xsd:integer"
+    },
+    "last_valuation_date": {
+      "@id": "indexed:last_valuation_date",
+      "@type": "xsd:date"
+    },
+    "owners": {
+      "@id": "indexed:owners",
+      "@container": "@list"
+    },
+    "subsidiaries": {
+      "@id": "indexed:subsidiaries",
+      "@container": "@list"
+    },
+    "valuation_events": {
+      "@id": "indexed:valuation_events",
+      "@container": "@list"
+    },
+    "technologies": {
+      "@id": "indexed:technologies",
+      "@container": "@list"
+    },
+    "app_stack": {
+      "@id": "indexed:app_stack",
+      "@container": "@list"
+    },
+    "InvestorProfile": "indexed:InvestorProfile",
+    "description": {
+      "@id": "indexed:description",
+      "@type": "xsd:string"
+    },
+    "portfolio_company_count": {
+      "@id": "indexed:portfolio_company_count",
+      "@type": "xsd:integer"
+    },
+    "total_capital_deployed": {
+      "@id": "indexed:total_capital_deployed",
+      "@type": "xsd:integer"
+    },
+    "avg_check_size": {
+      "@id": "indexed:avg_check_size",
+      "@type": "xsd:integer"
+    },
+    "typical_check_size_min": {
+      "@id": "indexed:typical_check_size_min",
+      "@type": "xsd:integer"
+    },
+    "typical_check_size_max": {
+      "@id": "indexed:typical_check_size_max",
+      "@type": "xsd:integer"
+    },
+    "portfolio_companies": {
+      "@id": "indexed:portfolio_companies",
+      "@container": "@list"
+    },
+    "investments": {
+      "@id": "indexed:investments",
+      "@container": "@list"
+    },
+    "sub_funds": {
+      "@id": "indexed:sub_funds",
+      "@container": "@list"
+    },
+    "SearchPageMeta": "indexed:SearchPageMeta",
+    "total": {
+      "@id": "indexed:total",
+      "@type": "xsd:integer"
+    },
+    "page": {
+      "@id": "indexed:page",
+      "@type": "xsd:integer"
+    },
+    "limit": {
+      "@id": "indexed:limit",
+      "@type": "xsd:integer"
+    },
+    "hasMore": {
+      "@id": "indexed:hasMore",
+      "@type": "xsd:boolean"
+    },
+    "revealed_count": {
+      "@id": "indexed:revealed_count",
+      "@type": "xsd:integer"
+    },
+    "unrevealed_count": {
+      "@id": "indexed:unrevealed_count",
+      "@type": "xsd:integer"
+    },
+    "all_revealed": {
+      "@id": "indexed:all_revealed",
+      "@type": "xsd:boolean"
+    },
+    "next_cursor": {
+      "@id": "indexed:next_cursor",
+      "@type": "xsd:string"
+    },
+    "search_quota": {
+      "@id": "indexed:search_quota"
+    },
+    "depth": {
+      "@id": "indexed:depth"
+    },
+    "alternate_entities": {
+      "@id": "indexed:alternate_entities",
+      "@container": "@list"
+    },
+    "alternate_entities_truncated": {
+      "@id": "indexed:alternate_entities_truncated",
+      "@type": "xsd:boolean"
+    },
+    "resolved_filters": {
+      "@id": "indexed:resolved_filters"
+    },
+    "RevealResult": "indexed:RevealResult",
+    "entity_type": {
+      "@id": "indexed:entity_type",
+      "@type": "xsd:string"
+    },
+    "status": {
+      "@id": "indexed:status",
+      "@type": "xsd:string"
+    },
+    "credits_charged": {
+      "@id": "indexed:credits_charged",
+      "@type": "xsd:integer"
+    },
+    "data": {
+      "@id": "indexed:data"
+    },
+    "EnrichSummary": "indexed:EnrichSummary",
+    "total_matched": {
+      "@id": "indexed:total_matched",
+      "@type": "xsd:integer"
+    },
+    "total_revealed": {
+      "@id": "indexed:total_revealed",
+      "@type": "xsd:integer"
+    },
+    "total_cached": {
+      "@id": "indexed:total_cached",
+      "@type": "xsd:integer"
+    },
+    "total_unmatched": {
+      "@id": "indexed:total_unmatched",
+      "@type": "xsd:integer"
+    },
+    "RevealSummary": "indexed:RevealSummary",
+    "total_failed": {
+      "@id": "indexed:total_failed",
+      "@type": "xsd:integer"
+    },
+    "UsageData": "indexed:UsageData",
+    "credits_included": {
+      "@id": "indexed:credits_included",
+      "@type": "xsd:integer"
+    },
+    "credits_used": {
+      "@id": "indexed:credits_used",
+      "@type": "xsd:integer"
+    },
+    "credits_remaining": {
+      "@id": "indexed:credits_remaining",
+      "@type": "xsd:integer"
+    },
+    "pack_credits_remaining": {
+      "@id": "indexed:pack_credits_remaining",
+      "@type": "xsd:integer"
+    },
+    "low_balance_threshold": {
+      "@id": "indexed:low_balance_threshold",
+      "@type": "xsd:decimal"
+    },
+    "low_balance_basis": {
+      "@id": "indexed:low_balance_basis",
+      "@type": "xsd:integer"
+    },
+    "overage_enabled": {
+      "@id": "indexed:overage_enabled",
+      "@type": "xsd:boolean"
+    },
+    "overage_credits_used": {
+      "@id": "indexed:overage_credits_used",
+      "@type": "xsd:integer"
+    },
+    "period_start": {
+      "@id": "indexed:period_start",
+      "@type": "xsd:dateTime"
+    },
+    "period_end": {
+      "@id": "indexed:period_end",
+      "@type": "xsd:dateTime"
+    },
+    "tier": {
+      "@id": "indexed:tier",
+      "@type": "xsd:string"
+    },
+    "limits": {
+      "@id": "indexed:limits"
+    },
+    "IndustryFilter": "indexed:IndustryFilter",
+    "label": {
+      "@id": "indexed:label",
+      "@type": "xsd:string"
+    },
+    "aliases": {
+      "@id": "indexed:aliases",
+      "@container": "@list"
+    },
+    "db_variants_count": {
+      "@id": "indexed:db_variants_count",
+      "@type": "xsd:integer"
+    },
+    "ApiError": "indexed:ApiError",
+    "error": {
+      "@id": "indexed:error",
+      "@type": "xsd:string"
+    },
+    "code": {
+      "@id": "indexed:code",
+      "@type": "xsd:string"
+    },
+    "reason": {
+      "@id": "indexed:reason",
+      "@type": "xsd:string"
+    },
+    "remaining": {
+      "@id": "indexed:remaining",
+      "@type": "xsd:integer"
+    },
+    "top_up_url": {
+      "@id": "indexed:top_up_url",
+      "@type": "@id"
+    },
+    "top_up_pack": {
+      "@id": "indexed:top_up_pack"
+    },
+    "request_id": {
+      "@id": "indexed:request_id",
+      "@type": "xsd:string"
+    },
+    "details": {
+      "@id": "indexed:details",
+      "@container": "@list"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Indexed API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Indexed's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-02) from openapi/indexed-vc-openapi.yaml.",
+  "dcterms:created": "2026-10-02",
+  "dcterms:source": [
+    "openapi/indexed-vc-openapi.yaml"
+  ]
+}

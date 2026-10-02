@@ -1,0 +1,6 @@
+generated: '2026-10-02'
+method: probed
+generator: harvest-llms.py
+source: https://indexed.vc/llms.txt
+bytes: 12576
+note: saved verbatim; the provider's own document

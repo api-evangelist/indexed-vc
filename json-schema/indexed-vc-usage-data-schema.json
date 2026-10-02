@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/indexed-vc/main/json-schema/indexed-vc-usage-data-schema.json",
+  "title": "UsageData",
+  "x-generated": "2026-10-02",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/indexed-vc-openapi.yaml#/components/schemas/UsageData",
+  "type": "object",
+  "properties": {
+    "credits_included": {
+      "type": "integer"
+    },
+    "credits_used": {
+      "type": "integer"
+    },
+    "credits_remaining": {
+      "type": "integer"
+    },
+    "pack_credits_remaining": {
+      "type": "integer"
+    },
+    "low_balance_threshold": {
+      "type": "number",
+      "description": "Alert threshold for the active subscription or latest-pack bucket"
+    },
+    "low_balance_basis": {
+      "type": "integer",
+      "description": "Current bucket size used to derive the 10% threshold"
+    },
+    "overage_enabled": {
+      "type": "boolean"
+    },
+    "overage_credits_used": {
+      "type": "integer"
+    },
+    "period_start": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "period_end": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "silver",
+        "gold",
+        "platinum",
+        "enterprise"
+      ]
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "rate_limit_per_minute": {
+          "type": "integer"
+        },
+        "api_keys_max": {
+          "type": "integer"
+        },
+        "reveal_batch_size_max": {
+          "type": "integer"
+        },
+        "reveal_hourly_max": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

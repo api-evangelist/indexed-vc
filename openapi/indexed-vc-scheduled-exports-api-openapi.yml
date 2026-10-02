@@ -1,0 +1,174 @@
+openapi: 3.2.0
+info:
+  title: Indexed.vc Scheduled Exports API
+  version: 1.0.0
+  description: 'Company intelligence API providing comprehensive data on private companies,
+
+    funding history, and investor relationships.'
+  contact:
+    name: Indexed.vc Support
+    url: https://indexed.vc
+  license:
+    name: Proprietary
+servers:
+- url: https://indexed.vc/api/v1
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Scheduled Exports
+paths:
+  /scheduled-exports:
+    get:
+      operationId: listScheduledExports
+      summary: List scheduled exports (FREE, Platinum/Enterprise)
+      responses:
+        '200':
+          description: Your scheduled exports
+        '403':
+          description: Requires Platinum or Enterprise
+      tags:
+      - Scheduled Exports
+    post:
+      operationId: createScheduledExport
+      summary: Create a scheduled export (Platinum/Enterprise)
+      description: Recurring CSV/JSON delivery. On each run the file is generated, stored privately, and an expiring signed download link (7 days) is emailed to your account address — never an attachment, never a public object. Each run bills the standard export credit schedule (1 credit per 10 rows; 3x with include_funding). Runs are capped at 5,000 rows — contact us for full-dataset Enterprise feeds.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - entity
+              - columns
+              - cadence
+              properties:
+                entity:
+                  type: string
+                  enum:
+                  - companies
+                  - investors
+                columns:
+                  type: array
+                  items:
+                    type: string
+                  description: Registered export columns for the entity
+                cadence:
+                  type: string
+                  enum:
+                  - daily
+                  - weekly
+                  - monthly
+                format:
+                  type: string
+                  enum:
+                  - csv
+                  - json
+                  default: csv
+                include_funding:
+                  type: boolean
+                  default: false
+                  description: Append every funding event, including debt and exits; each row's counts_toward_total (Yes/No) marks whether it sums into total_funding_raised.
+                list_id:
+                  type: string
+                  format: uuid
+                  description: Scope to one of your saved lists. Omit for the full visible dataset (capped per run).
+      responses:
+        '201':
+          description: Created
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Requires Platinum or Enterprise
+          or schedule limit reached: null
+      tags:
+      - Scheduled Exports
+  /scheduled-exports/{id}:
+    delete:
+      operationId: deleteScheduledExport
+      summary: Delete a scheduled export (FREE)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Deleted
+        '404':
+          description: Not found
+      tags:
+      - Scheduled Exports
+components:
+  schemas:
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+  responses:
+    ValidationError:
+      description: Invalid request parameters
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key in format `idx_<32chars>`. Available on every plan; entity detail and reveal spend credits on every plan, while bulk enrichment, webhooks, scheduled exports and listing/sorting require a paid plan (Silver+).

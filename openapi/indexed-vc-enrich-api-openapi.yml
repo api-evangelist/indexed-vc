@@ -1,0 +1,517 @@
+openapi: 3.2.0
+info:
+  title: Indexed.vc Enrich API
+  version: 1.0.0
+  description: 'Company intelligence API providing comprehensive data on private companies,
+
+    funding history, and investor relationships.'
+  contact:
+    name: Indexed.vc Support
+    url: https://indexed.vc
+  license:
+    name: Proprietary
+servers:
+- url: https://indexed.vc/api/v1
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Enrich
+paths:
+  /enrich:
+    post:
+      operationId: enrichCompanies
+      summary: Bulk enrich companies by domain or slug
+      description: 'The GTM/RevOps query: submit a list of domains (or slugs) and get the
+
+        matched company records back. Domain matching is EXACT
+
+        registrable-domain (mercury.com matches Mercury at mercury.com or any
+
+        of its subdomains — never superstrings like bluemercury.com); you are
+
+        never billed for a fuzzy match. Billed like /reveal — 3 credits per
+
+        newly revealed match; previously-revealed matches are free within the
+
+        12-month cache. Unmatched inputs return status "not_found" (no charge).
+
+        Multiple inputs resolving to the same company are billed once; only the first
+
+        such input carries the charge. Ambiguous domains return 409 AMBIGUOUS_DOMAIN
+
+        without billing; retry with verified company slugs.
+
+        Host precedence matches /companies/lookup: the exact current website wins
+
+        over subsidiaries or former websites; conflicting current owners still fail closed.
+
+        A lookup-card match must also be eligible for full public company data.
+
+        Delivered domain matches include domain_match explaining the matched host and evidence.
+
+        Misses carry coverage_status (not_in_coverage_scope, scope_review,
+
+        pending_enrichment, not_found, or invalid_domain for malformed input that was never searched). A miss does not enqueue research.
+
+        Batch size and hourly limits follow your tier''s reveal limits.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                domains:
+                  type: array
+                  items:
+                    type: string
+                  description: Company website domains, e.g. ["stripe.com", "openai.com"]
+                slugs:
+                  type: array
+                  items:
+                    type: string
+                  description: Indexed company slugs
+      responses:
+        '200':
+          description: Enrich results (normalized unique domains first, then unique slugs, in first-seen order within each group) + summary
+          headers:
+            X-Request-Id:
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - summary
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - query
+                      - matched
+                      - status
+                      - credits_charged
+                      properties:
+                        query:
+                          type: string
+                        matched:
+                          type: boolean
+                        status:
+                          type: string
+                          enum:
+                          - revealed
+                          - cached
+                          - insufficient_credits
+                          - not_found
+                        credits_charged:
+                          type: integer
+                        domain_match:
+                          $ref: '#/components/schemas/DomainMatch'
+                        coverage_status:
+                          type: string
+                          enum:
+                          - not_in_coverage_scope
+                          - scope_review
+                          - pending_enrichment
+                          - not_found
+                          - invalid_domain
+                          description: Explanation for unmatched inputs; does not promise admission or an enrichment timeline.
+                        data:
+                          $ref: '#/components/schemas/CompanyProfile'
+                  summary:
+                    $ref: '#/components/schemas/EnrichSummary'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '409':
+          description: Domain matches multiple companies (AMBIGUOUS_DOMAIN); no charge.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+      tags:
+      - Enrich
+components:
+  schemas:
+    CompanyRelationship:
+      type: object
+      properties:
+        relationship_type:
+          type: string
+          enum:
+          - subsidiary
+          - brand
+          - division
+          - joint_venture
+        ownership_pct:
+          type:
+          - number
+          - 'null'
+          description: Stated ownership percentage when a source gives it
+        started_on:
+          type:
+          - string
+          - 'null'
+          format: date
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            slug:
+              type: string
+            name:
+              type: string
+            logo_url:
+              type:
+              - string
+              - 'null'
+    EnrichSummary:
+      type: object
+      required:
+      - total_requested
+      - total_matched
+      - total_revealed
+      - total_cached
+      - total_unmatched
+      - total_credits_charged
+      properties:
+        total_requested:
+          type: integer
+          minimum: 0
+          description: Number of unique normalized inputs.
+        total_matched:
+          type: integer
+          minimum: 0
+          description: Number of distinct matched companies; multiple inputs can match one company.
+        total_revealed:
+          type: integer
+          minimum: 0
+        total_cached:
+          type: integer
+          minimum: 0
+        total_unmatched:
+          type: integer
+          minimum: 0
+          description: Number of unmatched unique inputs
+          including malformed domains.: null
+        total_credits_charged:
+          type: integer
+          minimum: 0
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+    DomainMatch:
+      type: object
+      required:
+      - queried
+      - canonical_domain
+      - matched_via
+      properties:
+        queried:
+          type: string
+          description: Canonicalized domain supplied by the caller
+        canonical_domain:
+          type:
+          - string
+          - 'null'
+          description: Current website host on the matched company
+        matched_via:
+          type: string
+          enum:
+          - canonical_domain
+          - alias_domain
+          - former_website
+    CompanyProfile:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      description: Shape varies by depth parameter (slim/standard/full)
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        data_as_of:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last verified enrichment timestamp; null when unknown.
+        logo_url:
+          type:
+          - string
+          - 'null'
+        website:
+          type:
+          - string
+          - 'null'
+        short_description:
+          type:
+          - string
+          - 'null'
+        long_description:
+          type:
+          - string
+          - 'null'
+        industries:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        hq_city:
+          type:
+          - string
+          - 'null'
+        hq_state:
+          type:
+          - string
+          - 'null'
+        hq_country:
+          type:
+          - string
+          - 'null'
+        employee_count_range:
+          type:
+          - string
+          - 'null'
+        total_funding_raised:
+          type:
+          - integer
+          - 'null'
+          description: 'Whole USD. Sum of disclosed itemized funding rounds at confidence 50+: equity rounds, notes, SAFEs, equity crowdfunding and grants. Grants are included; debt, IPOs, acquisitions and secondaries are not. Null when no counted round has a disclosed amount.'
+        operating_status:
+          type:
+          - string
+          - 'null'
+        founded_year:
+          type:
+          - integer
+          - 'null'
+        last_valuation:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        last_valuation_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Null at slim/standard depth or when unknown.
+        owners:
+          type: array
+          description: 'depth=standard and full. Companies that own this one, from reviewed, sourced relationships: its controlling parent (subsidiary, brand or division), or its joint-venture owners. Empty when none is recorded.'
+          items:
+            $ref: '#/components/schemas/CompanyRelationship'
+        subsidiaries:
+          type: array
+          description: depth=standard and full. Companies this one owns (subsidiaries, brands, divisions, joint ventures), up to 200, by name.
+          items:
+            $ref: '#/components/schemas/CompanyRelationship'
+        valuation_events:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              event_type:
+                type: string
+              amount_raised_usd:
+                type:
+                - integer
+                - 'null'
+              announced_date:
+                type:
+                - string
+                - 'null'
+                format: date
+              participants:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    is_lead:
+                      type: boolean
+                    investor:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        slug:
+                          type: string
+                        investor_type:
+                          type:
+                          - string
+                          - 'null'
+        technologies:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              technology_name:
+                type: string
+              category:
+                type:
+                - string
+                - 'null'
+              stack_type:
+                type: string
+                const: tech
+        app_stack:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              technology_name:
+                type: string
+              category:
+                type:
+                - string
+                - 'null'
+              stack_type:
+                type: string
+                const: app
+  responses:
+    ServiceUnavailable:
+      description: Data or credit service unavailable; retry later.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    ValidationError:
+      description: Invalid request parameters
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    PaymentRequired:
+      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
+
+        '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RateLimited:
+      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key in format `idx_<32chars>`. Available on every plan; entity detail and reveal spend credits on every plan, while bulk enrichment, webhooks, scheduled exports and listing/sorting require a paid plan (Silver+).

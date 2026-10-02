@@ -1,0 +1,371 @@
+openapi: 3.2.0
+info:
+  title: Indexed.vc Webhooks API
+  version: 1.0.0
+  description: 'Company intelligence API providing comprehensive data on private companies,
+
+    funding history, and investor relationships.'
+  contact:
+    name: Indexed.vc Support
+    url: https://indexed.vc
+  license:
+    name: Proprietary
+servers:
+- url: https://indexed.vc/api/v1
+  description: Production
+security:
+- ApiKeyAuth: []
+tags:
+- name: Webhooks
+paths:
+  /webhooks:
+    get:
+      operationId: listWebhooks
+      summary: List webhook endpoints
+      description: FREE. Signing secrets are masked (whsec_…last4) — the full secret is only shown at creation.
+      responses:
+        '200':
+          description: Endpoints + per-tier limit
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/ValidationError'
+      tags:
+      - Webhooks
+    post:
+      operationId: createWebhook
+      summary: Create a webhook endpoint (Silver and up)
+      description: 'Subscribe a URL to funding-round alerts. When a new funding round lands
+
+        for a company on your watchlist (`list_id` — one of your saved company
+
+        lists), or any company if unscoped, Indexed POSTs a signed JSON event
+
+        to your endpoint within ~5 minutes.
+
+
+        **Billing:** 1 credit per successfully delivered event. Test sends and
+
+        retries are free; a delivery is never charged twice (idempotent per
+
+        delivery id). Deliveries pause if your credits are exhausted and resume
+
+        on the retry schedule once topped up.
+
+
+        **Delivery + retries:** 10s timeout, HTTPS only, redirects refused.
+
+        Non-2xx responses retry on a backoff of 1m → 10m → 1h → 6h → 24h, then
+
+        dead-letter. 20 consecutive failures auto-disable the endpoint
+
+        (re-enable via PATCH `is_active: true`).
+
+
+        **Delivery semantics — at-least-once.** Like Stripe/GitHub webhooks, an
+
+        event may occasionally be delivered more than once (e.g. your endpoint
+
+        200s but the ack is lost, or a worker is reclaimed after a crash).
+
+        **Dedupe on `X-Indexed-Delivery-Id`** — process each id once. Billing is
+
+        exactly-once regardless: a given delivery is charged at most one credit
+
+        even if re-sent (idempotent per delivery id).
+
+
+        **Verifying signatures:** every request carries
+
+        `X-Indexed-Signature: t=,v1=` where
+
+        `v1 = HMAC_SHA256(secret, "{t}.{raw_body}")`. Recompute over the raw
+
+        body, compare constant-time, and reject if `|now - t| > 300s`:
+
+        ```js
+
+        const [t, v1] = header.match(/t=(\d+),v1=([0-9a-f]+)/).slice(1)
+
+        const expected = crypto.createHmac(''sha256'', secret).update(`${t}.${rawBody}`).digest(''hex'')
+
+        const valid = crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(v1))
+
+        && Math.abs(Date.now()/1000 - t) ",
+
+        "event": "domain.coverage.added",
+
+        "created_at": "2026-09-01T12:00:00Z",
+
+        "data": {
+
+        "requested_domain": "example.com",
+
+        "company": { "id", "name", "slug", "website", "industries", "hq_city", "hq_country" },
+
+        "domain_match": {
+
+        "queried": "example.com",
+
+        "canonical_domain": "example.com",
+
+        "matched_via": "canonical_domain"
+
+        }
+
+        }
+
+        }
+
+        ```
+
+
+        **Event payload** (`funding_round.created` / `funding_round.updated`):
+
+        ```json
+
+        {
+
+        "id": "",
+
+        "event": "funding_round.created",
+
+        "created_at": "2026-07-03T12:00:00Z",
+
+        "data": {
+
+        "company": { "id", "name", "slug", "website", "industries", "hq_city", "hq_country" },
+
+        "funding_round": {
+
+        "event_type": "series_b", "round_name": "Series B",
+
+        "amount_raised_usd": 42000000, "announced_date": "2026-07-01",
+
+        "post_money_valuation": 400000000, "press_url": "https://…",
+
+        "investors": [{ "name": "Example Ventures", "is_lead": true }]
+
+        }
+
+        }
+
+        }
+
+        ```
+
+        Endpoint limits: Silver 2, Gold 3, Platinum 10, Enterprise 25.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - url
+              properties:
+                url:
+                  type: string
+                  description: HTTPS endpoint (public host — internal/private addresses rejected)
+                description:
+                  type: string
+                  maxLength: 200
+                event_types:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - funding_round.created
+                    - funding_round.updated
+                    - company.created
+                    - company.updated
+                    - investor.created
+                    - domain.coverage.added
+                list_id:
+                  type: string
+                  format: uuid
+                  description: Scope to one of your saved company lists (watchlist). Omit for all companies.
+      responses:
+        '201':
+          description: Created. `secret` (whsec_…) is returned ONLY here — store it to verify signatures.
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '403':
+          $ref: '#/components/responses/ValidationError'
+      tags:
+      - Webhooks
+  /webhooks/{id}:
+    get:
+      operationId: getWebhook
+      summary: Get a webhook endpoint (FREE)
+      description: Fetch a single endpoint you own, with its secret masked. Costs no credits.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Endpoint (secret masked)
+        '404':
+          description: Not found or not owned by you
+      tags:
+      - Webhooks
+    patch:
+      operationId: updateWebhook
+      summary: Update a webhook endpoint
+      description: Update url/event_types/list_id/description or pause/resume via is_active. Re-enabling resets the failure counter.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Updated endpoint (secret masked)
+        '404':
+          description: Not found or not owned by you
+      tags:
+      - Webhooks
+    delete:
+      operationId: deleteWebhook
+      summary: Delete a webhook endpoint
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Deleted
+        '404':
+          description: Not found or not owned by you
+      tags:
+      - Webhooks
+  /webhooks/{id}/test:
+    post:
+      operationId: testWebhook
+      summary: Send a sample signed event (FREE)
+      description: 'Sends a sample event (flagged `"test": true`) shaped for one of the endpoint''s subscribed types — pass `{"event_type": "..."}` to pick one, default is the first subscribed type. Never consumes credits.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: '{ delivered, response_code, error, credits_charged: 0 }'
+        '404':
+          description: Not found
+      tags:
+      - Webhooks
+  /webhooks/{id}/deliveries:
+    get:
+      operationId: listWebhookDeliveries
+      summary: Recent delivery log (FREE)
+      description: Last 50 deliveries with status (pending/delivered/failed/dead/credit_blocked), attempts, response codes, and credits_charged — the per-event billing audit trail. Test sends appear with event_type "test" and credits_charged 0.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Delivery log entries
+        '404':
+          description: Not found
+      tags:
+      - Webhooks
+components:
+  schemas:
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+  responses:
+    ValidationError:
+      description: Invalid request parameters
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key in format `idx_<32chars>`. Available on every plan; entity detail and reveal spend credits on every plan, while bulk enrichment, webhooks, scheduled exports and listing/sorting require a paid plan (Silver+).
