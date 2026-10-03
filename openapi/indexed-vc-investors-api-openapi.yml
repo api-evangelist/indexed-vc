@@ -212,64 +212,6 @@ paths:
       - Investors
 components:
   schemas:
-    InvestorCard:
-      type: object
-      required:
-      - id
-      - name
-      - slug
-      - _revealed
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        slug:
-          type: string
-        logo_url:
-          type:
-          - string
-          - 'null'
-        website:
-          type:
-          - string
-          - 'null'
-        investor_type:
-          type:
-          - string
-          - 'null'
-          enum:
-          - vc
-          - pe
-          - growth_equity
-          - hedge_fund
-          - cvc
-          - family_office
-          - sovereign_wealth
-          - accelerator
-          - incubator
-          - angel_group
-          - angel
-          - individual
-          - bank
-          - other
-          - null
-        hq_city:
-          type:
-          - string
-          - 'null'
-        hq_country:
-          type:
-          - string
-          - 'null'
-        total_investments_count:
-          type:
-          - integer
-          - 'null'
-        _revealed:
-          type: boolean
-          description: true when this account has unlocked the entity's depth within 12 months
     InvestorProfile:
       type: object
       required:
@@ -573,7 +515,85 @@ components:
                 type: string
               message:
                 type: string
+    InvestorCard:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      - _revealed
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        logo_url:
+          type:
+          - string
+          - 'null'
+        website:
+          type:
+          - string
+          - 'null'
+        investor_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - vc
+          - pe
+          - growth_equity
+          - hedge_fund
+          - cvc
+          - family_office
+          - sovereign_wealth
+          - accelerator
+          - incubator
+          - angel_group
+          - angel
+          - individual
+          - bank
+          - other
+          - null
+        hq_city:
+          type:
+          - string
+          - 'null'
+        hq_country:
+          type:
+          - string
+          - 'null'
+        total_investments_count:
+          type:
+          - integer
+          - 'null'
+        _revealed:
+          type: boolean
+          description: true when this account has unlocked the entity's depth within 12 months
   responses:
+    RateLimited:
+      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
     ValidationError:
       description: Invalid request parameters
       headers:
@@ -616,26 +636,6 @@ components:
           schema:
             type: string
             format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    RateLimited:
-      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-        X-RateLimit-Limit:
-          schema:
-            type: integer
-        X-RateLimit-Remaining:
-          schema:
-            type: integer
-        Retry-After:
-          schema:
-            type: integer
       content:
         application/json:
           schema:

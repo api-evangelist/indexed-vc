@@ -1,7 +1,7 @@
 {
   "provider": "indexed-vc",
   "sources": [
-    "indexed-vc-openapi.yaml"
+    "_original/indexed-vc-openapi.yaml"
   ],
   "outputs": [
     "indexed-vc-companies-api-openapi.yml",
@@ -13,12 +13,11 @@
     "indexed-vc-usage-api-openapi.yml",
     "indexed-vc-webhooks-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/indexed-vc-openapi.yaml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "indexed-vc-openapi.yaml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "indexed-vc-openapi.yaml: tagged paths GET /companies -> Companies",
     "indexed-vc-openapi.yaml: tagged paths POST /companies/lookup -> Companies",
@@ -47,7 +46,16 @@
     "indexed-vc-openapi.yaml: declared missing tag: Scheduled Exports",
     "indexed-vc-openapi.yaml: declared missing tag: Usage",
     "indexed-vc-openapi.yaml: declared missing tag: Webhooks",
-    "apis.yml register: written (+8 apis, 8 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "indexed-vc-companies-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "indexed-vc-enrich-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "indexed-vc-industries-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "indexed-vc-investors-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "indexed-vc-reveal-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "indexed-vc-scheduled-exports-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "indexed-vc-usage-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "indexed-vc-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
