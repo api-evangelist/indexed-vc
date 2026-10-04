@@ -146,6 +146,143 @@ paths:
       - Enrich
 components:
   schemas:
+    DomainMatch:
+      type: object
+      required:
+      - queried
+      - canonical_domain
+      - matched_via
+      properties:
+        queried:
+          type: string
+          description: Canonicalized domain supplied by the caller
+        canonical_domain:
+          type:
+          - string
+          - 'null'
+          description: Current website host on the matched company
+        matched_via:
+          type: string
+          enum:
+          - canonical_domain
+          - alias_domain
+          - former_website
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+    CompanyRelationship:
+      type: object
+      properties:
+        relationship_type:
+          type: string
+          enum:
+          - subsidiary
+          - brand
+          - division
+          - joint_venture
+        ownership_pct:
+          type:
+          - number
+          - 'null'
+          description: Stated ownership percentage when a source gives it
+        started_on:
+          type:
+          - string
+          - 'null'
+          format: date
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            slug:
+              type: string
+            name:
+              type: string
+            logo_url:
+              type:
+              - string
+              - 'null'
+    EnrichSummary:
+      type: object
+      required:
+      - total_requested
+      - total_matched
+      - total_revealed
+      - total_cached
+      - total_unmatched
+      - total_credits_charged
+      properties:
+        total_requested:
+          type: integer
+          minimum: 0
+          description: Number of unique normalized inputs.
+        total_matched:
+          type: integer
+          minimum: 0
+          description: Number of distinct matched companies; multiple inputs can match one company.
+        total_revealed:
+          type: integer
+          minimum: 0
+        total_cached:
+          type: integer
+          minimum: 0
+        total_unmatched:
+          type: integer
+          minimum: 0
+          description: Number of unmatched unique inputs
+          including malformed domains.: null
+        total_credits_charged:
+          type: integer
+          minimum: 0
     CompanyProfile:
       type: object
       required:
@@ -310,154 +447,22 @@ components:
               stack_type:
                 type: string
                 const: app
-    DomainMatch:
-      type: object
-      required:
-      - queried
-      - canonical_domain
-      - matched_via
-      properties:
-        queried:
-          type: string
-          description: Canonicalized domain supplied by the caller
-        canonical_domain:
-          type:
-          - string
-          - 'null'
-          description: Current website host on the matched company
-        matched_via:
-          type: string
-          enum:
-          - canonical_domain
-          - alias_domain
-          - former_website
-    EnrichSummary:
-      type: object
-      required:
-      - total_requested
-      - total_matched
-      - total_revealed
-      - total_cached
-      - total_unmatched
-      - total_credits_charged
-      properties:
-        total_requested:
-          type: integer
-          minimum: 0
-          description: Number of unique normalized inputs.
-        total_matched:
-          type: integer
-          minimum: 0
-          description: Number of distinct matched companies; multiple inputs can match one company.
-        total_revealed:
-          type: integer
-          minimum: 0
-        total_cached:
-          type: integer
-          minimum: 0
-        total_unmatched:
-          type: integer
-          minimum: 0
-          description: Number of unmatched unique inputs
-          including malformed domains.: null
-        total_credits_charged:
-          type: integer
-          minimum: 0
-    CompanyRelationship:
-      type: object
-      properties:
-        relationship_type:
-          type: string
-          enum:
-          - subsidiary
-          - brand
-          - division
-          - joint_venture
-        ownership_pct:
-          type:
-          - number
-          - 'null'
-          description: Stated ownership percentage when a source gives it
-        started_on:
-          type:
-          - string
-          - 'null'
-          format: date
-        company:
-          type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-            slug:
-              type: string
-            name:
-              type: string
-            logo_url:
-              type:
-              - string
-              - 'null'
-    ApiError:
-      type: object
-      required:
-      - error
-      - code
-      properties:
-        error:
-          type: string
-          description: Human-readable error message
-        code:
-          type: string
-          description: Machine-readable error code
-        reason:
-          type: string
-          enum:
-          - credits_exhausted
-          - overage_cap_reached
-          - no_active_period
-        remaining:
-          type: integer
-          minimum: 0
-        top_up_url:
-          type: string
-          format: uri
-        top_up_pack:
-          type: object
-          properties:
-            id:
-              type: string
-              example: pack_5k
-            credits:
-              type: integer
-              example: 5000
-            price_cents:
-              type: integer
-              example: 20000
-        request_id:
-          type: string
-          format: uuid
-          description: Correlation ID (also in X-Request-Id header)
-        details:
-          type: array
-          description: Present for validation errors
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
   responses:
-    ServiceUnavailable:
-      description: Data or credit service unavailable; retry later.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
     PaymentRequired:
       description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
 
         '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
       headers:
         X-Request-Id:
           schema:
@@ -478,6 +483,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
+    ServiceUnavailable:
+      description: Data or credit service unavailable; retry later.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
     RateLimited:
       description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
       headers:
@@ -494,17 +505,6 @@ components:
         Retry-After:
           schema:
             type: integer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    AuthError:
-      description: Missing, invalid, or insufficient API key
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
       content:
         application/json:
           schema:

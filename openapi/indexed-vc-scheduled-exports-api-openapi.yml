@@ -103,18 +103,6 @@ paths:
       tags:
       - Scheduled Exports
 components:
-  responses:
-    ValidationError:
-      description: Invalid request parameters
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
   schemas:
     ApiError:
       type: object
@@ -166,6 +154,18 @@ components:
                 type: string
               message:
                 type: string
+  responses:
+    ValidationError:
+      description: Invalid request parameters
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -394,6 +394,252 @@ paths:
       - Companies
 components:
   schemas:
+    DomainMatch:
+      type: object
+      required:
+      - queried
+      - canonical_domain
+      - matched_via
+      properties:
+        queried:
+          type: string
+          description: Canonicalized domain supplied by the caller
+        canonical_domain:
+          type:
+          - string
+          - 'null'
+          description: Current website host on the matched company
+        matched_via:
+          type: string
+          enum:
+          - canonical_domain
+          - alias_domain
+          - former_website
+    CompanyDomainLookupItem:
+      oneOf:
+      - type: object
+        required:
+        - domain
+        - status
+        - credits_charged
+        - data
+        properties:
+          domain:
+            type: string
+          status:
+            type: string
+            const: hit
+          credits_charged:
+            type: integer
+            const: 1
+          data:
+            $ref: '#/components/schemas/CompanyCard'
+      - type: object
+        required:
+        - domain
+        - status
+        - coverage_requested
+        - coverage_eta_days
+        - credits_charged
+        properties:
+          domain:
+            type: string
+          status:
+            type: string
+            const: miss
+          coverage_requested:
+            type: boolean
+            description: true when the request was durably recorded for manual review; not a promise of admission or coverage. false means recording failed and the client can retry, or the domain belongs to a company outside coverage scope
+          coverage_status:
+            type: string
+            enum:
+            - queued
+            - not_queued
+            - pending_enrichment
+            - scope_review
+            - not_in_coverage_scope
+            description: 'Why this domain missed: queued (recorded for review), not_queued (recording failed), pending_enrichment (held, profile not yet servable), scope_review (held, scope under review), not_in_coverage_scope (held, outside coverage scope; never served)'
+          coverage_eta_days:
+            type:
+            - integer
+            - 'null'
+            description: 'Currently null: manual review has no guaranteed completion date. Misses are never charged.'
+          credits_charged:
+            type: integer
+            const: 0
+      - type: object
+        required:
+        - domain
+        - status
+        - credits_charged
+        properties:
+          domain:
+            type: string
+          status:
+            type: string
+            const: insufficient_credits
+          credits_charged:
+            type: integer
+            const: 0
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+    CompanyCard:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      - _revealed
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        logo_url:
+          type:
+          - string
+          - 'null'
+        website:
+          type:
+          - string
+          - 'null'
+        short_description:
+          type:
+          - string
+          - 'null'
+        industries:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        hq_city:
+          type:
+          - string
+          - 'null'
+        hq_country:
+          type:
+          - string
+          - 'null'
+        employee_count_range:
+          type:
+          - string
+          - 'null'
+          enum:
+          - 1-10
+          - 11-50
+          - 51-200
+          - 201-500
+          - 501-1000
+          - 1001-5000
+          - 5001-10000
+          - 10001+
+          - null
+        total_funding_raised:
+          type:
+          - integer
+          - 'null'
+          description: 'Whole USD. Sum of disclosed itemized funding rounds at confidence 50+: equity rounds, notes, SAFEs, equity crowdfunding and grants. Grants are included; debt, IPOs, acquisitions and secondaries are not. Null when no counted round has a disclosed amount.'
+        operating_status:
+          type:
+          - string
+          - 'null'
+          enum:
+          - active
+          - acquired
+          - ipo
+          - closed
+          - null
+        _revealed:
+          type: boolean
+          description: true when this account has unlocked the entity's depth within 12 months
+        domain_match:
+          $ref: '#/components/schemas/DomainMatch'
+    CompanyRelationship:
+      type: object
+      properties:
+        relationship_type:
+          type: string
+          enum:
+          - subsidiary
+          - brand
+          - division
+          - joint_venture
+        ownership_pct:
+          type:
+          - number
+          - 'null'
+          description: Stated ownership percentage when a source gives it
+        started_on:
+          type:
+          - string
+          - 'null'
+          format: date
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            slug:
+              type: string
+            name:
+              type: string
+            logo_url:
+              type:
+              - string
+              - 'null'
     CompanyProfile:
       type: object
       required:
@@ -558,121 +804,6 @@ components:
               stack_type:
                 type: string
                 const: app
-    CompanyDomainLookupSummary:
-      type: object
-      required:
-      - total_requested
-      - total_hits
-      - total_misses
-      - total_insufficient_credits
-      - total_credits_charged
-      properties:
-        total_requested:
-          type: integer
-        total_hits:
-          type: integer
-        total_misses:
-          type: integer
-        total_insufficient_credits:
-          type: integer
-        total_credits_charged:
-          type: integer
-    DomainMatch:
-      type: object
-      required:
-      - queried
-      - canonical_domain
-      - matched_via
-      properties:
-        queried:
-          type: string
-          description: Canonicalized domain supplied by the caller
-        canonical_domain:
-          type:
-          - string
-          - 'null'
-          description: Current website host on the matched company
-        matched_via:
-          type: string
-          enum:
-          - canonical_domain
-          - alias_domain
-          - former_website
-    CompanyCard:
-      type: object
-      required:
-      - id
-      - name
-      - slug
-      - _revealed
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        slug:
-          type: string
-        logo_url:
-          type:
-          - string
-          - 'null'
-        website:
-          type:
-          - string
-          - 'null'
-        short_description:
-          type:
-          - string
-          - 'null'
-        industries:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        hq_city:
-          type:
-          - string
-          - 'null'
-        hq_country:
-          type:
-          - string
-          - 'null'
-        employee_count_range:
-          type:
-          - string
-          - 'null'
-          enum:
-          - 1-10
-          - 11-50
-          - 51-200
-          - 201-500
-          - 501-1000
-          - 1001-5000
-          - 5001-10000
-          - 10001+
-          - null
-        total_funding_raised:
-          type:
-          - integer
-          - 'null'
-          description: 'Whole USD. Sum of disclosed itemized funding rounds at confidence 50+: equity rounds, notes, SAFEs, equity crowdfunding and grants. Grants are included; debt, IPOs, acquisitions and secondaries are not. Null when no counted round has a disclosed amount.'
-        operating_status:
-          type:
-          - string
-          - 'null'
-          enum:
-          - active
-          - acquired
-          - ipo
-          - closed
-          - null
-        _revealed:
-          type: boolean
-          description: true when this account has unlocked the entity's depth within 12 months
-        domain_match:
-          $ref: '#/components/schemas/DomainMatch'
     SearchPageMeta:
       type: object
       required:
@@ -795,192 +926,41 @@ components:
           type: object
           description: 'Echo of resolved filter values (e.g., industries: ai-ml → AI/ML). Only present when filters are applied.'
           additionalProperties: true
-    CompanyRelationship:
-      type: object
-      properties:
-        relationship_type:
-          type: string
-          enum:
-          - subsidiary
-          - brand
-          - division
-          - joint_venture
-        ownership_pct:
-          type:
-          - number
-          - 'null'
-          description: Stated ownership percentage when a source gives it
-        started_on:
-          type:
-          - string
-          - 'null'
-          format: date
-        company:
-          type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-            slug:
-              type: string
-            name:
-              type: string
-            logo_url:
-              type:
-              - string
-              - 'null'
-    ApiError:
+    CompanyDomainLookupSummary:
       type: object
       required:
-      - error
-      - code
+      - total_requested
+      - total_hits
+      - total_misses
+      - total_insufficient_credits
+      - total_credits_charged
       properties:
-        error:
-          type: string
-          description: Human-readable error message
-        code:
-          type: string
-          description: Machine-readable error code
-        reason:
-          type: string
-          enum:
-          - credits_exhausted
-          - overage_cap_reached
-          - no_active_period
-        remaining:
+        total_requested:
           type: integer
-          minimum: 0
-        top_up_url:
-          type: string
-          format: uri
-        top_up_pack:
-          type: object
-          properties:
-            id:
-              type: string
-              example: pack_5k
-            credits:
-              type: integer
-              example: 5000
-            price_cents:
-              type: integer
-              example: 20000
-        request_id:
-          type: string
-          format: uuid
-          description: Correlation ID (also in X-Request-Id header)
-        details:
-          type: array
-          description: Present for validation errors
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
-    CompanyDomainLookupItem:
-      oneOf:
-      - type: object
-        required:
-        - domain
-        - status
-        - credits_charged
-        - data
-        properties:
-          domain:
-            type: string
-          status:
-            type: string
-            const: hit
-          credits_charged:
-            type: integer
-            const: 1
-          data:
-            $ref: '#/components/schemas/CompanyCard'
-      - type: object
-        required:
-        - domain
-        - status
-        - coverage_requested
-        - coverage_eta_days
-        - credits_charged
-        properties:
-          domain:
-            type: string
-          status:
-            type: string
-            const: miss
-          coverage_requested:
-            type: boolean
-            description: true when the request was durably recorded for manual review; not a promise of admission or coverage. false means recording failed and the client can retry, or the domain belongs to a company outside coverage scope
-          coverage_status:
-            type: string
-            enum:
-            - queued
-            - not_queued
-            - pending_enrichment
-            - scope_review
-            - not_in_coverage_scope
-            description: 'Why this domain missed: queued (recorded for review), not_queued (recording failed), pending_enrichment (held, profile not yet servable), scope_review (held, scope under review), not_in_coverage_scope (held, outside coverage scope; never served)'
-          coverage_eta_days:
-            type:
-            - integer
-            - 'null'
-            description: 'Currently null: manual review has no guaranteed completion date. Misses are never charged.'
-          credits_charged:
-            type: integer
-            const: 0
-      - type: object
-        required:
-        - domain
-        - status
-        - credits_charged
-        properties:
-          domain:
-            type: string
-          status:
-            type: string
-            const: insufficient_credits
-          credits_charged:
-            type: integer
-            const: 0
+        total_hits:
+          type: integer
+        total_misses:
+          type: integer
+        total_insufficient_credits:
+          type: integer
+        total_credits_charged:
+          type: integer
   responses:
-    RateLimited:
-      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-        X-RateLimit-Limit:
-          schema:
-            type: integer
-        X-RateLimit-Remaining:
-          schema:
-            type: integer
-        Retry-After:
-          schema:
-            type: integer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    ValidationError:
-      description: Invalid request parameters
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
     PaymentRequired:
       description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
 
         '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
       headers:
         X-Request-Id:
           schema:
@@ -1001,13 +981,33 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
-    AuthError:
-      description: Missing, invalid, or insufficient API key
+    ValidationError:
+      description: Invalid request parameters
       headers:
         X-Request-Id:
           schema:
             type: string
             format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RateLimited:
+      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
       content:
         application/json:
           schema:

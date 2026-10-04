@@ -343,6 +343,114 @@ components:
                 type: string
               slug:
                 type: string
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+    InvestorCard:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      - _revealed
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        logo_url:
+          type:
+          - string
+          - 'null'
+        website:
+          type:
+          - string
+          - 'null'
+        investor_type:
+          type:
+          - string
+          - 'null'
+          enum:
+          - vc
+          - pe
+          - growth_equity
+          - hedge_fund
+          - cvc
+          - family_office
+          - sovereign_wealth
+          - accelerator
+          - incubator
+          - angel_group
+          - angel
+          - individual
+          - bank
+          - other
+          - null
+        hq_city:
+          type:
+          - string
+          - 'null'
+        hq_country:
+          type:
+          - string
+          - 'null'
+        total_investments_count:
+          type:
+          - integer
+          - 'null'
+        _revealed:
+          type: boolean
+          description: true when this account has unlocked the entity's depth within 12 months
     SearchPageMeta:
       type: object
       required:
@@ -465,150 +573,22 @@ components:
           type: object
           description: 'Echo of resolved filter values (e.g., industries: ai-ml → AI/ML). Only present when filters are applied.'
           additionalProperties: true
-    ApiError:
-      type: object
-      required:
-      - error
-      - code
-      properties:
-        error:
-          type: string
-          description: Human-readable error message
-        code:
-          type: string
-          description: Machine-readable error code
-        reason:
-          type: string
-          enum:
-          - credits_exhausted
-          - overage_cap_reached
-          - no_active_period
-        remaining:
-          type: integer
-          minimum: 0
-        top_up_url:
-          type: string
-          format: uri
-        top_up_pack:
-          type: object
-          properties:
-            id:
-              type: string
-              example: pack_5k
-            credits:
-              type: integer
-              example: 5000
-            price_cents:
-              type: integer
-              example: 20000
-        request_id:
-          type: string
-          format: uuid
-          description: Correlation ID (also in X-Request-Id header)
-        details:
-          type: array
-          description: Present for validation errors
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
-    InvestorCard:
-      type: object
-      required:
-      - id
-      - name
-      - slug
-      - _revealed
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        slug:
-          type: string
-        logo_url:
-          type:
-          - string
-          - 'null'
-        website:
-          type:
-          - string
-          - 'null'
-        investor_type:
-          type:
-          - string
-          - 'null'
-          enum:
-          - vc
-          - pe
-          - growth_equity
-          - hedge_fund
-          - cvc
-          - family_office
-          - sovereign_wealth
-          - accelerator
-          - incubator
-          - angel_group
-          - angel
-          - individual
-          - bank
-          - other
-          - null
-        hq_city:
-          type:
-          - string
-          - 'null'
-        hq_country:
-          type:
-          - string
-          - 'null'
-        total_investments_count:
-          type:
-          - integer
-          - 'null'
-        _revealed:
-          type: boolean
-          description: true when this account has unlocked the entity's depth within 12 months
   responses:
-    RateLimited:
-      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-        X-RateLimit-Limit:
-          schema:
-            type: integer
-        X-RateLimit-Remaining:
-          schema:
-            type: integer
-        Retry-After:
-          schema:
-            type: integer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    ValidationError:
-      description: Invalid request parameters
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
     PaymentRequired:
       description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
 
         '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
       headers:
         X-Request-Id:
           schema:
@@ -629,13 +609,33 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
-    AuthError:
-      description: Missing, invalid, or insufficient API key
+    ValidationError:
+      description: Invalid request parameters
       headers:
         X-Request-Id:
           schema:
             type: string
             format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RateLimited:
+      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
       content:
         application/json:
           schema:

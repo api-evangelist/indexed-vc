@@ -83,6 +83,270 @@ paths:
       - Reveal
 components:
   schemas:
+    InvestorProfile:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      description: Shape varies by depth parameter (slim/standard/full)
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        data_as_of:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Last verified enrichment timestamp; null when unknown.
+        logo_url:
+          type:
+          - string
+          - 'null'
+        website:
+          type:
+          - string
+          - 'null'
+        investor_type:
+          type:
+          - string
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        hq_city:
+          type:
+          - string
+          - 'null'
+        hq_country:
+          type:
+          - string
+          - 'null'
+        total_investments_count:
+          type:
+          - integer
+          - 'null'
+        portfolio_company_count:
+          type:
+          - integer
+          - 'null'
+        total_capital_deployed:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        avg_check_size:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        typical_check_size_min:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        typical_check_size_max:
+          type:
+          - integer
+          - 'null'
+          description: Null at slim/standard depth or when undisclosed.
+        portfolio_companies:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              company_name:
+                type: string
+              company_slug:
+                type: string
+              company_logo_url:
+                type:
+                - string
+                - 'null'
+              industries:
+                type: array
+                items:
+                  type: string
+              hq_country:
+                type:
+                - string
+                - 'null'
+        investments:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              company_name:
+                type: string
+              company_slug:
+                type: string
+              event_type:
+                type: string
+              date:
+                type:
+                - string
+                - 'null'
+                format: date
+              amount:
+                type:
+                - integer
+                - 'null'
+              is_lead:
+                type: boolean
+        sub_funds:
+          type: array
+          description: Only present at depth=full
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+    RevealSummary:
+      type: object
+      required:
+      - total_requested
+      - total_revealed
+      - total_cached
+      - total_failed
+      - total_credits_charged
+      properties:
+        total_requested:
+          type: integer
+        total_revealed:
+          type: integer
+        total_cached:
+          type: integer
+        total_failed:
+          type: integer
+        total_credits_charged:
+          type: integer
+    CompanyRelationship:
+      type: object
+      properties:
+        relationship_type:
+          type: string
+          enum:
+          - subsidiary
+          - brand
+          - division
+          - joint_venture
+        ownership_pct:
+          type:
+          - number
+          - 'null'
+          description: Stated ownership percentage when a source gives it
+        started_on:
+          type:
+          - string
+          - 'null'
+          format: date
+        company:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            slug:
+              type: string
+            name:
+              type: string
+            logo_url:
+              type:
+              - string
+              - 'null'
+    RevealResult:
+      type: object
+      required:
+      - id
+      - entity_type
+      - status
+      - credits_charged
+      properties:
+        id:
+          type: string
+          description: Entity identifier (UUID if input was UUID, slug if input was slug)
+        entity_type:
+          type: string
+          enum:
+          - company
+          - investor
+        status:
+          type: string
+          enum:
+          - revealed
+          - cached
+          - insufficient_credits
+          - not_found
+        credits_charged:
+          type: integer
+        data:
+          description: Full entity data (present when status is revealed or cached). Entity type determines the shape.
+          anyOf:
+          - $ref: '#/components/schemas/CompanyProfile'
+          - $ref: '#/components/schemas/InvestorProfile'
     CompanyProfile:
       type: object
       required:
@@ -247,281 +511,22 @@ components:
               stack_type:
                 type: string
                 const: app
-    RevealSummary:
-      type: object
-      required:
-      - total_requested
-      - total_revealed
-      - total_cached
-      - total_failed
-      - total_credits_charged
-      properties:
-        total_requested:
-          type: integer
-        total_revealed:
-          type: integer
-        total_cached:
-          type: integer
-        total_failed:
-          type: integer
-        total_credits_charged:
-          type: integer
-    InvestorProfile:
-      type: object
-      required:
-      - id
-      - name
-      - slug
-      description: Shape varies by depth parameter (slim/standard/full)
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        slug:
-          type: string
-        data_as_of:
-          type:
-          - string
-          - 'null'
-          format: date-time
-          description: Last verified enrichment timestamp; null when unknown.
-        logo_url:
-          type:
-          - string
-          - 'null'
-        website:
-          type:
-          - string
-          - 'null'
-        investor_type:
-          type:
-          - string
-          - 'null'
-        description:
-          type:
-          - string
-          - 'null'
-        hq_city:
-          type:
-          - string
-          - 'null'
-        hq_country:
-          type:
-          - string
-          - 'null'
-        total_investments_count:
-          type:
-          - integer
-          - 'null'
-        portfolio_company_count:
-          type:
-          - integer
-          - 'null'
-        total_capital_deployed:
-          type:
-          - integer
-          - 'null'
-          description: Null at slim/standard depth or when undisclosed.
-        avg_check_size:
-          type:
-          - integer
-          - 'null'
-          description: Null at slim/standard depth or when undisclosed.
-        typical_check_size_min:
-          type:
-          - integer
-          - 'null'
-          description: Null at slim/standard depth or when undisclosed.
-        typical_check_size_max:
-          type:
-          - integer
-          - 'null'
-          description: Null at slim/standard depth or when undisclosed.
-        portfolio_companies:
-          type: array
-          description: Only present at depth=full
-          items:
-            type: object
-            properties:
-              company_name:
-                type: string
-              company_slug:
-                type: string
-              company_logo_url:
-                type:
-                - string
-                - 'null'
-              industries:
-                type: array
-                items:
-                  type: string
-              hq_country:
-                type:
-                - string
-                - 'null'
-        investments:
-          type: array
-          description: Only present at depth=full
-          items:
-            type: object
-            properties:
-              company_name:
-                type: string
-              company_slug:
-                type: string
-              event_type:
-                type: string
-              date:
-                type:
-                - string
-                - 'null'
-                format: date
-              amount:
-                type:
-                - integer
-                - 'null'
-              is_lead:
-                type: boolean
-        sub_funds:
-          type: array
-          description: Only present at depth=full
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                format: uuid
-              name:
-                type: string
-              slug:
-                type: string
-    CompanyRelationship:
-      type: object
-      properties:
-        relationship_type:
-          type: string
-          enum:
-          - subsidiary
-          - brand
-          - division
-          - joint_venture
-        ownership_pct:
-          type:
-          - number
-          - 'null'
-          description: Stated ownership percentage when a source gives it
-        started_on:
-          type:
-          - string
-          - 'null'
-          format: date
-        company:
-          type: object
-          properties:
-            id:
-              type: string
-              format: uuid
-            slug:
-              type: string
-            name:
-              type: string
-            logo_url:
-              type:
-              - string
-              - 'null'
-    ApiError:
-      type: object
-      required:
-      - error
-      - code
-      properties:
-        error:
-          type: string
-          description: Human-readable error message
-        code:
-          type: string
-          description: Machine-readable error code
-        reason:
-          type: string
-          enum:
-          - credits_exhausted
-          - overage_cap_reached
-          - no_active_period
-        remaining:
-          type: integer
-          minimum: 0
-        top_up_url:
-          type: string
-          format: uri
-        top_up_pack:
-          type: object
-          properties:
-            id:
-              type: string
-              example: pack_5k
-            credits:
-              type: integer
-              example: 5000
-            price_cents:
-              type: integer
-              example: 20000
-        request_id:
-          type: string
-          format: uuid
-          description: Correlation ID (also in X-Request-Id header)
-        details:
-          type: array
-          description: Present for validation errors
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
-    RevealResult:
-      type: object
-      required:
-      - id
-      - entity_type
-      - status
-      - credits_charged
-      properties:
-        id:
-          type: string
-          description: Entity identifier (UUID if input was UUID, slug if input was slug)
-        entity_type:
-          type: string
-          enum:
-          - company
-          - investor
-        status:
-          type: string
-          enum:
-          - revealed
-          - cached
-          - insufficient_credits
-          - not_found
-        credits_charged:
-          type: integer
-        data:
-          description: Full entity data (present when status is revealed or cached). Entity type determines the shape.
-          anyOf:
-          - $ref: '#/components/schemas/CompanyProfile'
-          - $ref: '#/components/schemas/InvestorProfile'
   responses:
-    ServiceUnavailable:
-      description: Data or credit service unavailable; retry later.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
     PaymentRequired:
       description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
 
         '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
       headers:
         X-Request-Id:
           schema:
@@ -542,6 +547,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ApiError'
+    ServiceUnavailable:
+      description: Data or credit service unavailable; retry later.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
     RateLimited:
       description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
       headers:
@@ -558,17 +569,6 @@ components:
         Retry-After:
           schema:
             type: integer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    AuthError:
-      description: Missing, invalid, or insufficient API key
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
       content:
         application/json:
           schema:
