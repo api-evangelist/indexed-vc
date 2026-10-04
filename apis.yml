@@ -16,6 +16,11 @@ modified: '2026-10-02'
 tags:
 - Company
 - Data
+- Private Company
+- Funding
+tags_raw:
+- Company
+- Data
 - Private-Company
 - Funding
 - API
@@ -25,6 +30,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/indexed-vc-capability-edges.yml
+  name: Indexed Business Capability Map
 - type: AgenticAccess
   url: agentic-access/indexed-vc-agentic-access.yml
 - type: Plans
@@ -138,6 +146,8 @@ apis:
   humanURL: https://indexed.vc/docs/api
   baseURL: https://indexed.vc/api/v1
   tags:
+  - Investor
+  tags_raw:
   - Investors
   properties:
   - type: OpenAPI
@@ -226,6 +236,8 @@ apis:
   humanURL: https://indexed.vc/docs/api
   baseURL: https://indexed.vc/api/v1
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
