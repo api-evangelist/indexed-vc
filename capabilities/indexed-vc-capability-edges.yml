@@ -1,0 +1,34 @@
+slug: indexed-vc
+provider: Indexed
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 2
+edges:
+- tag: Webhooks
+  spec_file: indexed-vc-webhooks-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.9
+  evidence: POST /webhooks createWebhook 'Create a webhook endpoint'; POST /webhooks/{id}/test 'Send a
+    sample signed event'; GET /webhooks/{id}/deliveries 'Recent delivery log'
+  reason: Full lifecycle of outbound webhook endpoints plus test events and delivery logs is precisely
+    Webhook & Event Subscription Management in the developer-platform capability.
+- tag: Usage
+  spec_file: indexed-vc-usage-api-openapi.yml
+  capability_id: BC-4270.50
+  capability_id_l1: BC-4270
+  capability_name: API Consumption Governance
+  confidence: 0.7
+  evidence: GET /usage getUsage 'Check credit balance and limits'; schema UsageData
+  reason: Exposes API credit consumption and plan limits to the developer, which is API consumption governance
+    (quotas, usage analytics, plan tiers) rather than billing proper.
