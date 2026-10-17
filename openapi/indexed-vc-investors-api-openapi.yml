@@ -574,10 +574,8 @@ components:
           description: 'Echo of resolved filter values (e.g., industries: ai-ml → AI/ML). Only present when filters are applied.'
           additionalProperties: true
   responses:
-    PaymentRequired:
-      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
-
-        '
+    ValidationError:
+      description: Invalid request parameters
       headers:
         X-Request-Id:
           schema:
@@ -589,28 +587,6 @@ components:
             $ref: '#/components/schemas/ApiError'
     AuthError:
       description: Missing, invalid, or insufficient API key
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    NotFoundError:
-      description: Entity not found
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    ValidationError:
-      description: Invalid request parameters
       headers:
         X-Request-Id:
           schema:
@@ -636,6 +612,30 @@ components:
         Retry-After:
           schema:
             type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFoundError:
+      description: Entity not found
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    PaymentRequired:
+      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
+
+        '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
       content:
         application/json:
           schema:

@@ -394,6 +394,25 @@ paths:
       - Companies
 components:
   schemas:
+    CompanyDomainLookupSummary:
+      type: object
+      required:
+      - total_requested
+      - total_hits
+      - total_misses
+      - total_insufficient_credits
+      - total_credits_charged
+      properties:
+        total_requested:
+          type: integer
+        total_hits:
+          type: integer
+        total_misses:
+          type: integer
+        total_insufficient_credits:
+          type: integer
+        total_credits_charged:
+          type: integer
     DomainMatch:
       type: object
       required:
@@ -606,6 +625,128 @@ components:
           description: true when this account has unlocked the entity's depth within 12 months
         domain_match:
           $ref: '#/components/schemas/DomainMatch'
+    SearchPageMeta:
+      type: object
+      required:
+      - total
+      - page
+      - limit
+      - hasMore
+      - revealed_count
+      - unrevealed_count
+      - search_quota
+      properties:
+        total:
+          type: integer
+          description: Total matches (always full count, regardless of reveal_status filter)
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+        revealed_count:
+          type: integer
+        unrevealed_count:
+          type: integer
+        all_revealed:
+          type: boolean
+          description: Present when reveal_status=unrevealed but all matches are already revealed
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          description: Opaque continuation token for a paid key; null means the final page. Pass it as the cursor query parameter.
+        search_quota:
+          type: object
+          required:
+          - per_day
+          - used_today
+          - remaining_today
+          - resets_at
+          properties:
+            per_day:
+              type: integer
+            used_today:
+              type: integer
+            remaining_today:
+              type: integer
+            resets_at:
+              type: string
+              format: date-time
+            note:
+              type: string
+              description: Present when this page used paid credits beyond the daily quota
+        depth:
+          type: object
+          description: Only present while this page contains unrevealed results; points to the full-record endpoint
+          required:
+          - endpoint
+          - cost_credits
+          - unlocks
+          - docs
+          properties:
+            endpoint:
+              type: string
+            cost_credits:
+              type: integer
+            unlocks:
+              type: array
+              items:
+                type: string
+            docs:
+              type: string
+              format: uri
+            free_plan:
+              type: object
+              description: Present when the key's plan does not have full API access
+              required:
+              - credits_per_month
+              - full_records_per_month
+              properties:
+                credits_per_month:
+                  type: integer
+                full_records_per_month:
+                  type: integer
+        alternate_entities:
+          type: array
+          description: Identity-only investor pointers when an exact company-domain lookup belongs to an investor; no private data
+          items:
+            type: object
+            required:
+            - entity_type
+            - id
+            - name
+            - slug
+            - website
+            - investor_type
+            - profile_path
+            properties:
+              entity_type:
+                type: string
+                const: investor
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+              website:
+                type: string
+                format: uri
+              investor_type:
+                type:
+                - string
+                - 'null'
+              profile_path:
+                type: string
+        alternate_entities_truncated:
+          type: boolean
+        resolved_filters:
+          type: object
+          description: 'Echo of resolved filter values (e.g., industries: ai-ml → AI/ML). Only present when filters are applied.'
+          additionalProperties: true
     CompanyRelationship:
       type: object
       properties:
@@ -804,152 +945,9 @@ components:
               stack_type:
                 type: string
                 const: app
-    SearchPageMeta:
-      type: object
-      required:
-      - total
-      - page
-      - limit
-      - hasMore
-      - revealed_count
-      - unrevealed_count
-      - search_quota
-      properties:
-        total:
-          type: integer
-          description: Total matches (always full count, regardless of reveal_status filter)
-        page:
-          type: integer
-        limit:
-          type: integer
-        hasMore:
-          type: boolean
-        revealed_count:
-          type: integer
-        unrevealed_count:
-          type: integer
-        all_revealed:
-          type: boolean
-          description: Present when reveal_status=unrevealed but all matches are already revealed
-        next_cursor:
-          type:
-          - string
-          - 'null'
-          description: Opaque continuation token for a paid key; null means the final page. Pass it as the cursor query parameter.
-        search_quota:
-          type: object
-          required:
-          - per_day
-          - used_today
-          - remaining_today
-          - resets_at
-          properties:
-            per_day:
-              type: integer
-            used_today:
-              type: integer
-            remaining_today:
-              type: integer
-            resets_at:
-              type: string
-              format: date-time
-            note:
-              type: string
-              description: Present when this page used paid credits beyond the daily quota
-        depth:
-          type: object
-          description: Only present while this page contains unrevealed results; points to the full-record endpoint
-          required:
-          - endpoint
-          - cost_credits
-          - unlocks
-          - docs
-          properties:
-            endpoint:
-              type: string
-            cost_credits:
-              type: integer
-            unlocks:
-              type: array
-              items:
-                type: string
-            docs:
-              type: string
-              format: uri
-            free_plan:
-              type: object
-              description: Present when the key's plan does not have full API access
-              required:
-              - credits_per_month
-              - full_records_per_month
-              properties:
-                credits_per_month:
-                  type: integer
-                full_records_per_month:
-                  type: integer
-        alternate_entities:
-          type: array
-          description: Identity-only investor pointers when an exact company-domain lookup belongs to an investor; no private data
-          items:
-            type: object
-            required:
-            - entity_type
-            - id
-            - name
-            - slug
-            - website
-            - investor_type
-            - profile_path
-            properties:
-              entity_type:
-                type: string
-                const: investor
-              id:
-                type: string
-                format: uuid
-              name:
-                type: string
-              slug:
-                type: string
-              website:
-                type: string
-                format: uri
-              investor_type:
-                type:
-                - string
-                - 'null'
-              profile_path:
-                type: string
-        alternate_entities_truncated:
-          type: boolean
-        resolved_filters:
-          type: object
-          description: 'Echo of resolved filter values (e.g., industries: ai-ml → AI/ML). Only present when filters are applied.'
-          additionalProperties: true
-    CompanyDomainLookupSummary:
-      type: object
-      required:
-      - total_requested
-      - total_hits
-      - total_misses
-      - total_insufficient_credits
-      - total_credits_charged
-      properties:
-        total_requested:
-          type: integer
-        total_hits:
-          type: integer
-        total_misses:
-          type: integer
-        total_insufficient_credits:
-          type: integer
-        total_credits_charged:
-          type: integer
   responses:
-    PaymentRequired:
-      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
-
-        '
+    ValidationError:
+      description: Invalid request parameters
       headers:
         X-Request-Id:
           schema:
@@ -961,28 +959,6 @@ components:
             $ref: '#/components/schemas/ApiError'
     AuthError:
       description: Missing, invalid, or insufficient API key
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    NotFoundError:
-      description: Entity not found
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    ValidationError:
-      description: Invalid request parameters
       headers:
         X-Request-Id:
           schema:
@@ -1008,6 +984,30 @@ components:
         Retry-After:
           schema:
             type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFoundError:
+      description: Entity not found
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    PaymentRequired:
+      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
+
+        '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
       content:
         application/json:
           schema:

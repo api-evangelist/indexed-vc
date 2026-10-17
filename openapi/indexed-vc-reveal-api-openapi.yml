@@ -82,6 +82,68 @@ paths:
       tags:
       - Reveal
 components:
+  responses:
+    ServiceUnavailable:
+      description: Data or credit service unavailable; retry later.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    ValidationError:
+      description: Invalid request parameters
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    AuthError:
+      description: Missing, invalid, or insufficient API key
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    RateLimited:
+      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    PaymentRequired:
+      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
+
+        '
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
   schemas:
     InvestorProfile:
       type: object
@@ -283,6 +345,36 @@ components:
           type: integer
         total_credits_charged:
           type: integer
+    RevealResult:
+      type: object
+      required:
+      - id
+      - entity_type
+      - status
+      - credits_charged
+      properties:
+        id:
+          type: string
+          description: Entity identifier (UUID if input was UUID, slug if input was slug)
+        entity_type:
+          type: string
+          enum:
+          - company
+          - investor
+        status:
+          type: string
+          enum:
+          - revealed
+          - cached
+          - insufficient_credits
+          - not_found
+        credits_charged:
+          type: integer
+        data:
+          description: Full entity data (present when status is revealed or cached). Entity type determines the shape.
+          anyOf:
+          - $ref: '#/components/schemas/CompanyProfile'
+          - $ref: '#/components/schemas/InvestorProfile'
     CompanyRelationship:
       type: object
       properties:
@@ -317,36 +409,6 @@ components:
               type:
               - string
               - 'null'
-    RevealResult:
-      type: object
-      required:
-      - id
-      - entity_type
-      - status
-      - credits_charged
-      properties:
-        id:
-          type: string
-          description: Entity identifier (UUID if input was UUID, slug if input was slug)
-        entity_type:
-          type: string
-          enum:
-          - company
-          - investor
-        status:
-          type: string
-          enum:
-          - revealed
-          - cached
-          - insufficient_credits
-          - not_found
-        credits_charged:
-          type: integer
-        data:
-          description: Full entity data (present when status is revealed or cached). Entity type determines the shape.
-          anyOf:
-          - $ref: '#/components/schemas/CompanyProfile'
-          - $ref: '#/components/schemas/InvestorProfile'
     CompanyProfile:
       type: object
       required:
@@ -511,68 +573,6 @@ components:
               stack_type:
                 type: string
                 const: app
-  responses:
-    PaymentRequired:
-      description: 'Credits exhausted, no active credit period, or overage cap reached (code CREDIT_LIMIT_REACHED). This is a billing state, not a rate limit — do not retry. Follow top_up_url to repurchase the returned top_up_pack.
-
-        '
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    AuthError:
-      description: Missing, invalid, or insufficient API key
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    ValidationError:
-      description: Invalid request parameters
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    ServiceUnavailable:
-      description: Data or credit service unavailable; retry later.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
-    RateLimited:
-      description: Rate limit exceeded (code RATE_LIMITED). Back off and retry after Retry-After.
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-        X-RateLimit-Limit:
-          schema:
-            type: integer
-        X-RateLimit-Remaining:
-          schema:
-            type: integer
-        Retry-After:
-          schema:
-            type: integer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

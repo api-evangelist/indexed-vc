@@ -43,57 +43,19 @@ paths:
       tags:
       - Usage
 components:
+  responses:
+    AuthError:
+      description: Missing, invalid, or insufficient API key
+      headers:
+        X-Request-Id:
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
   schemas:
-    ApiError:
-      type: object
-      required:
-      - error
-      - code
-      properties:
-        error:
-          type: string
-          description: Human-readable error message
-        code:
-          type: string
-          description: Machine-readable error code
-        reason:
-          type: string
-          enum:
-          - credits_exhausted
-          - overage_cap_reached
-          - no_active_period
-        remaining:
-          type: integer
-          minimum: 0
-        top_up_url:
-          type: string
-          format: uri
-        top_up_pack:
-          type: object
-          properties:
-            id:
-              type: string
-              example: pack_5k
-            credits:
-              type: integer
-              example: 5000
-            price_cents:
-              type: integer
-              example: 20000
-        request_id:
-          type: string
-          format: uuid
-          description: Correlation ID (also in X-Request-Id header)
-        details:
-          type: array
-          description: Present for validation errors
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
     UsageData:
       type: object
       properties:
@@ -144,18 +106,56 @@ components:
               type: integer
             reveal_hourly_max:
               type: integer
-  responses:
-    AuthError:
-      description: Missing, invalid, or insufficient API key
-      headers:
-        X-Request-Id:
-          schema:
-            type: string
-            format: uuid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApiError'
+    ApiError:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+        reason:
+          type: string
+          enum:
+          - credits_exhausted
+          - overage_cap_reached
+          - no_active_period
+        remaining:
+          type: integer
+          minimum: 0
+        top_up_url:
+          type: string
+          format: uri
+        top_up_pack:
+          type: object
+          properties:
+            id:
+              type: string
+              example: pack_5k
+            credits:
+              type: integer
+              example: 5000
+            price_cents:
+              type: integer
+              example: 20000
+        request_id:
+          type: string
+          format: uuid
+          description: Correlation ID (also in X-Request-Id header)
+        details:
+          type: array
+          description: Present for validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
