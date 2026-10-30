@@ -64,5 +64,133 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Indexed is a company surfaced via the API Evangelist harvest backlog (source: new-submission) and added to the network as a stub for full-pipeline profiling.
-- https://indexed.vc
+Indexed provides a private-company intelligence platform offering searchable data on companies, investors, and funding rounds. Users can look up companies by name or domain, explore detailed funding histories, investor relationships, and export data via a REST API. The service includes tiered pricing with free credits and paid plans for higher usage, API keys for authentication, and features such as bulk enrichment, webhooks, and scheduled exports.
+
+**Areas:** Company · Data · Private Company · Funding
+
+## Indexed on APIs.io
+
+Everything profiled for Indexed is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/indexed-vc/](https://apis.io/providers/indexed-vc/)** — or go straight to one of the APIs or properties below.
+
+### APIs (8)
+
+- [Indexed Companies API](https://apis.io/apis/indexed-vc/indexed-vc-companies-api/) — The Companies API from Indexed — 3 operation(s) for companies.
+- [Indexed Enrich API](https://apis.io/apis/indexed-vc/indexed-vc-enrich-api/) — The Enrich API from Indexed — 1 operation(s) for enrich.
+- [Indexed Industries API](https://apis.io/apis/indexed-vc/indexed-vc-industries-api/) — The Industries API from Indexed — 1 operation(s) for industries.
+- [Indexed Investors API](https://apis.io/apis/indexed-vc/indexed-vc-investors-api/) — The Investors API from Indexed — 2 operation(s) for investors.
+- [Indexed Reveal API](https://apis.io/apis/indexed-vc/indexed-vc-reveal-api/) — The Reveal API from Indexed — 1 operation(s) for reveal.
+- [Indexed Scheduled Exports API](https://apis.io/apis/indexed-vc/indexed-vc-scheduled-exports-api/) — The Scheduled Exports API from Indexed — 2 operation(s) for scheduled exports.
+- [Indexed Usage API](https://apis.io/apis/indexed-vc/indexed-vc-usage-api/) — The Usage API from Indexed — 1 operation(s) for usage.
+- [Indexed Webhooks API](https://apis.io/apis/indexed-vc/indexed-vc-webhooks-api/) — The Webhooks API from Indexed — 4 operation(s) for webhooks.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Indexed Vc Agentic Access](https://apis.io/agentic-access/indexed-vc/indexed-vc-agentic-access/)
+
+#### JSON Schema (6)
+
+The data models the API reads and writes.
+
+- [CompanyCard](https://apis.io/schemas/indexed-vc/indexed-vc-company-card/)
+- [CompanyDomainLookupItem](https://apis.io/schemas/indexed-vc/indexed-vc-company-domain-lookup-item/)
+- [CompanyProfile](https://apis.io/schemas/indexed-vc/indexed-vc-company-profile/)
+- [InvestorProfile](https://apis.io/schemas/indexed-vc/indexed-vc-investor-profile/)
+- [SearchPageMeta](https://apis.io/schemas/indexed-vc/indexed-vc-search-page-meta/)
+- [UsageData](https://apis.io/schemas/indexed-vc/indexed-vc-usage-data/)
+
+#### JSON-LD (1)
+
+Linked-data contexts for the provider's vocabulary.
+
+- [Indexed Vc Context](https://apis.io/jsonld/indexed-vc/indexed-vc-context/)
+
+#### Governance rules (1)
+
+Spectral rulesets for the provider's contracts.
+
+- [Indexed API Rules](https://apis.io/rules/indexed-vc/indexed-vc-rules/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Indexed Vc Authentication](https://apis.io/security/indexed-vc/indexed-vc-authentication/)
+- [Indexed Vc Domain Security](https://apis.io/security/indexed-vc/indexed-vc-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Indexed Vc Plans Pricing](https://apis.io/plans/indexed-vc/indexed-vc-plans-pricing/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://indexed.vc)
+- [Documentation](https://indexed.vc/docs/api)
+- [Pricing](https://indexed.vc/pricing)
+- [Support](https://indexed.vc/contact)
+- [Terms of service](https://indexed.vc/terms)
+- [Privacy policy](https://indexed.vc/privacy)
+
+## API Evangelist rating
+
+**Kin Score 44.8** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 64.3 |
+| Contract quality | 67.1 |
+| Contract governance | 22.0 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 28.0 |
+| Access clarity | 63.2 |
+
+**Agent readiness 28.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | verified |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 24.5** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/indexed-vc/](https://apis.io/providers/indexed-vc/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Indexed: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/indexed-vc/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
